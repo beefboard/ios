@@ -7,14 +7,19 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		4003E1DC2189B0500057DBB0 /* Api.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4003E1DB2189B0500057DBB0 /* Api.swift */; };
+		400BF3B1218BD3DC004E2101 /* PostsController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 400BF3B0218BD3DC004E2101 /* PostsController.swift */; };
+		400BF3B3218BD417004E2101 /* PostDetailsController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 400BF3B2218BD417004E2101 /* PostDetailsController.swift */; };
 		40BB43B52176042C00B8850C /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 40BB43B42176042C00B8850C /* AppDelegate.swift */; };
-		40BB43B72176042C00B8850C /* ViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 40BB43B62176042C00B8850C /* ViewController.swift */; };
+		40BB43B72176042C00B8850C /* LoginController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 40BB43B62176042C00B8850C /* LoginController.swift */; };
 		40BB43BA2176042C00B8850C /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 40BB43B82176042C00B8850C /* Main.storyboard */; };
 		40BB43BC2176042D00B8850C /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 40BB43BB2176042D00B8850C /* Assets.xcassets */; };
 		40BB43BF2176042D00B8850C /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 40BB43BD2176042D00B8850C /* LaunchScreen.storyboard */; };
 		40BB43CA2176042D00B8850C /* beefboardTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 40BB43C92176042D00B8850C /* beefboardTests.swift */; };
 		40BB43D52176042D00B8850C /* beefboardUITests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 40BB43D42176042D00B8850C /* beefboardUITests.swift */; };
 		40BB43E32176049300B8850C /* .gitignore in Resources */ = {isa = PBXBuildFile; fileRef = 40BB43E22176049300B8850C /* .gitignore */; };
+		40F99CDF218C79AF0038882D /* ProfileController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 40F99CDE218C79AF0038882D /* ProfileController.swift */; };
+		AE7E792B0038CFFB2A4CAA97 /* Pods_beefboard.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 07F5B16796D9898D1E4B858D /* Pods_beefboard.framework */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -35,9 +40,14 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
+		07F5B16796D9898D1E4B858D /* Pods_beefboard.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_beefboard.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		3F773A8575180CE9EA4EB9A2 /* Pods-beefboard.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-beefboard.release.xcconfig"; path = "Pods/Target Support Files/Pods-beefboard/Pods-beefboard.release.xcconfig"; sourceTree = "<group>"; };
+		4003E1DB2189B0500057DBB0 /* Api.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Api.swift; sourceTree = "<group>"; };
+		400BF3B0218BD3DC004E2101 /* PostsController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PostsController.swift; sourceTree = "<group>"; };
+		400BF3B2218BD417004E2101 /* PostDetailsController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PostDetailsController.swift; sourceTree = "<group>"; };
 		40BB43B12176042C00B8850C /* beefboard.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = beefboard.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		40BB43B42176042C00B8850C /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
-		40BB43B62176042C00B8850C /* ViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ViewController.swift; sourceTree = "<group>"; };
+		40BB43B62176042C00B8850C /* LoginController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LoginController.swift; sourceTree = "<group>"; };
 		40BB43B92176042C00B8850C /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/Main.storyboard; sourceTree = "<group>"; };
 		40BB43BB2176042D00B8850C /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		40BB43BE2176042D00B8850C /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/LaunchScreen.storyboard; sourceTree = "<group>"; };
@@ -50,6 +60,8 @@
 		40BB43D62176042D00B8850C /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		40BB43E22176049300B8850C /* .gitignore */ = {isa = PBXFileReference; lastKnownFileType = text; path = .gitignore; sourceTree = "<group>"; };
 		40BB43E4217604A300B8850C /* README.md */ = {isa = PBXFileReference; lastKnownFileType = net.daringfireball.markdown; path = README.md; sourceTree = "<group>"; };
+		40F99CDE218C79AF0038882D /* ProfileController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProfileController.swift; sourceTree = "<group>"; };
+		5233F8C02C25FE2F47BF4268 /* Pods-beefboard.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-beefboard.debug.xcconfig"; path = "Pods/Target Support Files/Pods-beefboard/Pods-beefboard.debug.xcconfig"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -57,6 +69,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				AE7E792B0038CFFB2A4CAA97 /* Pods_beefboard.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -86,6 +99,8 @@
 				40BB43C82176042D00B8850C /* beefboardTests */,
 				40BB43D32176042D00B8850C /* beefboardUITests */,
 				40BB43B22176042C00B8850C /* Products */,
+				9E351F1AD939FF8755F4CF0C /* Pods */,
+				D62442367F52461DCBE8F9D6 /* Frameworks */,
 			);
 			sourceTree = "<group>";
 		};
@@ -103,11 +118,15 @@
 			isa = PBXGroup;
 			children = (
 				40BB43B42176042C00B8850C /* AppDelegate.swift */,
-				40BB43B62176042C00B8850C /* ViewController.swift */,
+				40BB43B62176042C00B8850C /* LoginController.swift */,
 				40BB43B82176042C00B8850C /* Main.storyboard */,
 				40BB43BB2176042D00B8850C /* Assets.xcassets */,
 				40BB43BD2176042D00B8850C /* LaunchScreen.storyboard */,
 				40BB43C02176042D00B8850C /* Info.plist */,
+				4003E1DB2189B0500057DBB0 /* Api.swift */,
+				400BF3B0218BD3DC004E2101 /* PostsController.swift */,
+				400BF3B2218BD417004E2101 /* PostDetailsController.swift */,
+				40F99CDE218C79AF0038882D /* ProfileController.swift */,
 			);
 			path = beefboard;
 			sourceTree = "<group>";
@@ -130,6 +149,23 @@
 			path = beefboardUITests;
 			sourceTree = "<group>";
 		};
+		9E351F1AD939FF8755F4CF0C /* Pods */ = {
+			isa = PBXGroup;
+			children = (
+				5233F8C02C25FE2F47BF4268 /* Pods-beefboard.debug.xcconfig */,
+				3F773A8575180CE9EA4EB9A2 /* Pods-beefboard.release.xcconfig */,
+			);
+			name = Pods;
+			sourceTree = "<group>";
+		};
+		D62442367F52461DCBE8F9D6 /* Frameworks */ = {
+			isa = PBXGroup;
+			children = (
+				07F5B16796D9898D1E4B858D /* Pods_beefboard.framework */,
+			);
+			name = Frameworks;
+			sourceTree = "<group>";
+		};
 /* End PBXGroup section */
 
 /* Begin PBXNativeTarget section */
@@ -137,9 +173,11 @@
 			isa = PBXNativeTarget;
 			buildConfigurationList = 40BB43D92176042D00B8850C /* Build configuration list for PBXNativeTarget "beefboard" */;
 			buildPhases = (
+				545C588FC8E9F38CD1E88F32 /* [CP] Check Pods Manifest.lock */,
 				40BB43AD2176042C00B8850C /* Sources */,
 				40BB43AE2176042C00B8850C /* Frameworks */,
 				40BB43AF2176042C00B8850C /* Resources */,
+				25787245DE747E8B195D54D5 /* [CP] Embed Pods Frameworks */,
 			);
 			buildRules = (
 			);
@@ -257,13 +295,70 @@
 		};
 /* End PBXResourcesBuildPhase section */
 
+/* Begin PBXShellScriptBuildPhase section */
+		25787245DE747E8B195D54D5 /* [CP] Embed Pods Frameworks */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputFileListPaths = (
+			);
+			inputPaths = (
+				"${SRCROOT}/Pods/Target Support Files/Pods-beefboard/Pods-beefboard-frameworks.sh",
+				"${BUILT_PRODUCTS_DIR}/Alamofire/Alamofire.framework",
+				"${BUILT_PRODUCTS_DIR}/AwaitKit/AwaitKit.framework",
+				"${BUILT_PRODUCTS_DIR}/Kingfisher/Kingfisher.framework",
+				"${BUILT_PRODUCTS_DIR}/PromiseKit/PromiseKit.framework",
+			);
+			name = "[CP] Embed Pods Frameworks";
+			outputFileListPaths = (
+			);
+			outputPaths = (
+				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/Alamofire.framework",
+				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/AwaitKit.framework",
+				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/Kingfisher.framework",
+				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/PromiseKit.framework",
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "\"${SRCROOT}/Pods/Target Support Files/Pods-beefboard/Pods-beefboard-frameworks.sh\"\n";
+			showEnvVarsInLog = 0;
+		};
+		545C588FC8E9F38CD1E88F32 /* [CP] Check Pods Manifest.lock */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputFileListPaths = (
+			);
+			inputPaths = (
+				"${PODS_PODFILE_DIR_PATH}/Podfile.lock",
+				"${PODS_ROOT}/Manifest.lock",
+			);
+			name = "[CP] Check Pods Manifest.lock";
+			outputFileListPaths = (
+			);
+			outputPaths = (
+				"$(DERIVED_FILE_DIR)/Pods-beefboard-checkManifestLockResult.txt",
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "diff \"${PODS_PODFILE_DIR_PATH}/Podfile.lock\" \"${PODS_ROOT}/Manifest.lock\" > /dev/null\nif [ $? != 0 ] ; then\n    # print error to STDERR\n    echo \"error: The sandbox is not in sync with the Podfile.lock. Run 'pod install' or update your CocoaPods installation.\" >&2\n    exit 1\nfi\n# This output is used by Xcode 'outputs' to avoid re-running this script phase.\necho \"SUCCESS\" > \"${SCRIPT_OUTPUT_FILE_0}\"\n";
+			showEnvVarsInLog = 0;
+		};
+/* End PBXShellScriptBuildPhase section */
+
 /* Begin PBXSourcesBuildPhase section */
 		40BB43AD2176042C00B8850C /* Sources */ = {
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				40BB43B72176042C00B8850C /* ViewController.swift in Sources */,
+				4003E1DC2189B0500057DBB0 /* Api.swift in Sources */,
+				400BF3B3218BD417004E2101 /* PostDetailsController.swift in Sources */,
+				400BF3B1218BD3DC004E2101 /* PostsController.swift in Sources */,
+				40BB43B72176042C00B8850C /* LoginController.swift in Sources */,
 				40BB43B52176042C00B8850C /* AppDelegate.swift in Sources */,
+				40F99CDF218C79AF0038882D /* ProfileController.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -436,10 +531,15 @@
 		};
 		40BB43DA2176042D00B8850C /* Debug */ = {
 			isa = XCBuildConfiguration;
+			baseConfigurationReference = 5233F8C02C25FE2F47BF4268 /* Pods-beefboard.debug.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CODE_SIGN_STYLE = Automatic;
 				DEVELOPMENT_TEAM = 5K82BW7QAQ;
+				FRAMEWORK_SEARCH_PATHS = (
+					"$(inherited)",
+					"$(PROJECT_DIR)/Carthage/Build/iOS",
+				);
 				INFOPLIST_FILE = beefboard/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
@@ -454,10 +554,15 @@
 		};
 		40BB43DB2176042D00B8850C /* Release */ = {
 			isa = XCBuildConfiguration;
+			baseConfigurationReference = 3F773A8575180CE9EA4EB9A2 /* Pods-beefboard.release.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CODE_SIGN_STYLE = Automatic;
 				DEVELOPMENT_TEAM = 5K82BW7QAQ;
+				FRAMEWORK_SEARCH_PATHS = (
+					"$(inherited)",
+					"$(PROJECT_DIR)/Carthage/Build/iOS",
+				);
 				INFOPLIST_FILE = beefboard/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
