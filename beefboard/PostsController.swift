@@ -7,31 +7,38 @@
 //
 
 import UIKit
+import PromiseKit
 import AwaitKit
-import Kingfisher
-
-class PostCell: UITableViewCell {
-    @IBOutlet weak var authorLabel: UILabel!
-    @IBOutlet weak var contentLabel: UILabel!
-    @IBOutlet weak var titleLabel: UILabel!
-    @IBOutlet weak var mainImage: UIImageView!
-}
 
 class PostsController: UITableViewController {
     @IBOutlet weak var navigationBar: UINavigationItem!
     
-    var posts: [Post] = []
-    var pinnedPosts: [Post] = []
-    var auth: User?
-
+    private var postsDataSource = PostsDataModel()
+    private var authSource = AuthModel()
+    
+    private var auth: User?
+    
+    private var pinnedPosts: [Post] = []
+    private var posts: [Post] = []
+    
+    private var refresher: UIRefreshControl?
+    
     override func viewDidLoad() {
         super.viewDidLoad()
+        
+        self.postsDataSource.delegate = self
+        self.authSource.delegate = self
+        
+        self.refreshControl?.addTarget(self, action: #selector(PostsController.refreshPosts(refreshControl:)), for: UIControl.Event.valueChanged)
+        
+        self.showBarItemsBusy()
+        self.postsDataSource.refreshPosts()
+        
     }
     
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
-        self.loadAuth()
-        self.loadPosts()
+        self.authSource.retrieveAuth()
     }
     
     func presentView(of viewController: UIViewController) {
@@ -39,13 +46,19 @@ class PostsController: UITableViewController {
         self.present(navController, animated: true, completion: nil)
     }
     
-    @objc func showLogin() {
+    @objc func openCreate() {
+        let storyBoard: UIStoryboard = UIStoryboard(name: "Main", bundle: nil)
+        let view = storyBoard.instantiateViewController(withIdentifier: "newPost") as! NewPostController
+        self.presentView(of: view)
+    }
+    
+    @objc func openLogin() {
         let storyBoard: UIStoryboard = UIStoryboard(name: "Main", bundle: nil)
         let view = storyBoard.instantiateViewController(withIdentifier: "loginView") as! LoginController
         self.presentView(of: view)
     }
     
-    @objc func showProfile() {
+    @objc func openProfile() {
         let storyBoard: UIStoryboard = UIStoryboard(name: "Main", bundle: nil)
         let view = storyBoard.instantiateViewController(withIdentifier: "profileView") as! ProfileController
         view.details = self.auth
@@ -53,91 +66,32 @@ class PostsController: UITableViewController {
         self.presentView(of: view)
     }
     
-    func loadPosts() {
-        async {
-            var allPosts: [Post] = []
-            do {
-                allPosts = try await(BeefboardApi.getPosts())
-            } catch (let error as ApiError) {
-                print(error)
-                return
-            }
-            
-            self.pinnedPosts = []
-            self.posts = []
-            
-            for post in allPosts {
-                if post.pinned {
-                    self.pinnedPosts.append(post)
-                } else {
-                    self.posts.append(post)
-                }
-            }
-            
-            DispatchQueue.main.async {
-                self.tableView.reloadData()
-            }
-        }
+    @objc func refreshPosts(refreshControl: UIRefreshControl) {
+        self.refresher = refreshControl
+        self.postsDataSource.refreshPosts(excludingCache: true)
     }
     
-    func loadAuth() {
-        if !BeefboardApi.hasToken() {
-            self.showLoginAction()
-            return
-        }
-        
-        self.showBusyAction()
-        print("Starting async")
-        async {
-            print("Getting auth")
-            do {
-                self.auth = try await(BeefboardApi.getAuth())
-            } catch (let error as ApiError) {
-                print("wtf")
-                if error == ApiError.invalidCredentials {
-                    BeefboardApi.clearToken()
-                    self.auth = nil
-                } else {
-                    print(error)
-                }
-            }
-            
-            print("Got auth")
-            
-            DispatchQueue.main.async {
-                if self.auth == nil {
-                    print("Showing login button")
-                    self.showLoginAction()
-                } else {
-                    self.showProfileAction()
-                }
-            }
-        }
+    func showError(title: String, message: String) {
+        let alert = UIAlertController(title: title, message: message, preferredStyle: .alert)
+        alert.addAction(UIAlertAction(title: "Ok", style: .default, handler: nil))
+        self.present(alert, animated: false, completion: nil)
     }
     
-    func showBusyAction() {
+    func showBarItemsBusy() {
         let uiBusy = UIActivityIndicatorView(style: .white)
         uiBusy.hidesWhenStopped = true
         uiBusy.startAnimating()
-        self.navigationBar.rightBarButtonItem = UIBarButtonItem(customView: uiBusy)
+        self.navigationBar.leftBarButtonItem = UIBarButtonItem(customView: uiBusy)
+        self.navigationBar.rightBarButtonItem = nil
     }
     
-    func showLoginAction() {
-        let loginAction = UIBarButtonItem(title: "Login", style: .plain, target: self, action: #selector(self.showLogin))
-        self.navigationBar.rightBarButtonItem = loginAction
-    }
-    
-    func showProfileAction() {
-        let profileAction = UIBarButtonItem(title: "Profile", style: .plain, target: self, action: #selector(self.showProfile))
-        self.navigationBar.rightBarButtonItem = profileAction
-    }
-
     func tableView(tableView: UITableView, titleForHeaderInSection section: Int) -> String? {
+        print("Getting header for \(section)")
         switch section {
         case 0:
-            return "Sort By"
+            return "Pinned"
         default:
-            return "Filter"
+            return "Posts"
         }
     }
     
@@ -157,12 +111,9 @@ class PostsController: UITableViewController {
         }
         
     }
-
     
     override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        let cell = tableView.dequeueReusableCell(withIdentifier: "cell", for: indexPath) as! PostCell
-        
-        print("Populating: \(indexPath.row)")
+        let cell = tableView.dequeueReusableCell(withIdentifier: PostCell.identifier, for: indexPath) as! PostCell
         
         var post: Post? = nil
         switch(indexPath.section) {
@@ -172,66 +123,84 @@ class PostsController: UITableViewController {
             post = self.posts[indexPath.row]
         }
         
-        print(post!.title)
-        
-        cell.titleLabel?.text = post!.title
-        cell.contentLabel?.text = post!.content
-        cell.authorLabel?.text = post!.author
-        print(post!.numImages)
-        if post!.numImages > 0 {
-            cell.mainImage.kf.indicatorType = .activity
-            cell.mainImage.kf.setImage(with: URL(string: "https://api.beefboard.mooo.com/v1/posts/\(post!.id)/images/0"))
-        }
-        
-        // Configure the cell...
+        cell.configureCell(with: post!)
 
         return cell
     }
     
-
-    /*
-    // Override to support conditional editing of the table view.
-    override func tableView(_ tableView: UITableView, canEditRowAt indexPath: IndexPath) -> Bool {
-        // Return false if you do not want the specified item to be editable.
-        return true
-    }
-    */
-
-    /*
-    // Override to support editing the table view.
-    override func tableView(_ tableView: UITableView, commit editingStyle: UITableViewCellEditingStyle, forRowAt indexPath: IndexPath) {
-        if editingStyle == .delete {
-            // Delete the row from the data source
-            tableView.deleteRows(at: [indexPath], with: .fade)
-        } else if editingStyle == .insert {
-            // Create a new instance of the appropriate class, insert it into the array, and add a new row to the table view
-        }    
-    }
-    */
-
-    /*
-    // Override to support rearranging the table view.
-    override func tableView(_ tableView: UITableView, moveRowAt fromIndexPath: IndexPath, to: IndexPath) {
-
-    }
-    */
-
-    /*
-    // Override to support conditional rearranging of the table view.
-    override func tableView(_ tableView: UITableView, canMoveRowAt indexPath: IndexPath) -> Bool {
-        // Return false if you do not want the item to be re-orderable.
-        return true
-    }
-    */
-
-    /*
-    // MARK: - Navigation
-
-    // In a storyboard-based application, you will often want to do a little preparation before navigation
     override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
-        // Get the new view controller using segue.destination.
-        // Pass the selected object to the new view controller.
+        if segue.identifier == "openPost" {
+            if let indexPath = self.tableView.indexPathForSelectedRow {
+                if let navigationController = segue.destination as? UINavigationController {
+                    if let postDetailsController = navigationController.topViewController as? PostDetailsController {
+                        let posts = indexPath.section == 0 ? self.pinnedPosts : self.posts
+                        postDetailsController.post = posts[indexPath.row]
+                    }
+                }
+            }
+        }
     }
-    */
 
+}
+
+
+extension PostsController: PostsDataModelDelegate {
+    func didRecievePosts(posts: [Post], pinnedPosts: [Post]) {
+        self.posts = posts
+        self.pinnedPosts = pinnedPosts
+        self.tableView.reloadData()
+        
+        // Stop the refresh icon, if it exists
+        self.refresher?.endRefreshing()
+        self.refresher = nil
+    }
+    
+    func didFailReceiveWithError(error: ApiError) {
+        switch (error) {
+        case ApiError.connectionError:
+            return
+        default:
+            return
+        }
+    }
+}
+
+extension PostsController: AuthModelDelegate {
+    func showLoginAction() {
+        let loginAction = UIBarButtonItem(title: "Login", style: .plain, target: self, action: #selector(PostsController.openLogin))
+        self.navigationBar.leftBarButtonItem = loginAction
+        self.navigationBar.rightBarButtonItem = nil
+    }
+    
+    func showProfileAction() {
+        let profileAction = UIBarButtonItem(title: "Profile", style: .plain, target: self, action: #selector(PostsController.openProfile))
+        self.navigationBar.leftBarButtonItem = profileAction
+    }
+    
+    func showAddAction() {
+        let profileAction = UIBarButtonItem(barButtonSystemItem: .add, target: self, action: #selector(PostsController.openCreate))
+        self.navigationBar.rightBarButtonItem = profileAction
+    }
+    
+    func didReceiveAuth(auth: User?) {
+        self.auth = auth
+        
+        print("Recieived auth: \(auth)")
+        
+        if auth == nil {
+            self.showLoginAction()
+        } else {
+            self.showProfileAction()
+            self.showAddAction()
+        }
+    }
+    
+    func didReceiveAuthError(error: ApiError) {
+        switch (error) {
+        case ApiError.connectionError:
+            return
+        default:
+            return
+        }
+    }
 }

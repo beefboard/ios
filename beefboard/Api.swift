@@ -32,7 +32,7 @@ struct PostsList: Decodable {
     let posts: [Post]
 }
 
-struct User: Decodable {
+struct User: Codable {
     let username: String
     let firstName: String
     let lastName: String
@@ -56,8 +56,6 @@ enum ApiError: Error {
 enum DateError: String, Error {
     case invalidDate
 }
-
-
 
 extension Formatter {
     static let iso8601: ISO8601DateFormatter = {
@@ -84,7 +82,7 @@ class BeefboardApi {
         return self.getToken() != nil
     }
     
-    public static func clearToken() {
+    private static func clearToken() {
         UserDefaults.standard.set(nil, forKey: BeefboardApi.TOKEN_KEY)
     }
     
@@ -111,6 +109,10 @@ class BeefboardApi {
         default:
             return .unknownError
         }
+    }
+    
+    public static func getImageUrl(forPost postId: String, forImage imageId: Int) -> String {
+        return "\(BeefboardApi.BEEFBOARD_API_HOST)posts/\(postId)/images/\(imageId)"
     }
     
     public static func login(username: String, password: String) -> Promise<Bool> {
@@ -146,6 +148,30 @@ class BeefboardApi {
                         return seal.reject(error)
                     }
                 }
+        }
+    }
+    
+    public static func logout() -> Promise<Void> {
+        if !self.hasToken() {
+            return Promise{ seal in
+                seal.fulfill(())
+            }
+        }
+        
+        let request = Alamofire.request(
+            buildUrl(to: "/me"),
+            method: .delete,
+            encoding: JSONEncoding.default,
+            headers: buildHeaders()
+        )
+        
+        return Promise{ seal in
+            request
+                .validate()
+                .responseJSON{ response in
+                    self.clearToken()
+                    return seal.fulfill(())
+            }
         }
     }
     

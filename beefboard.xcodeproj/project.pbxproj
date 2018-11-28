@@ -10,6 +10,14 @@
 		4003E1DC2189B0500057DBB0 /* Api.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4003E1DB2189B0500057DBB0 /* Api.swift */; };
 		400BF3B1218BD3DC004E2101 /* PostsController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 400BF3B0218BD3DC004E2101 /* PostsController.swift */; };
 		400BF3B3218BD417004E2101 /* PostDetailsController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 400BF3B2218BD417004E2101 /* PostDetailsController.swift */; };
+		404AFD9921A9D09D0042BEC1 /* NewPostController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 404AFD9821A9D09D0042BEC1 /* NewPostController.swift */; };
+		404AFD9B21AB27210042BEC1 /* Theme.swift in Sources */ = {isa = PBXBuildFile; fileRef = 404AFD9A21AB27210042BEC1 /* Theme.swift */; };
+		404AFD9D21AB2F840042BEC1 /* RegistrationController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 404AFD9C21AB2F840042BEC1 /* RegistrationController.swift */; };
+		404AFD9F21AB39CF0042BEC1 /* LoginModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 404AFD9E21AB39CF0042BEC1 /* LoginModel.swift */; };
+		404AFDA321AB79080042BEC1 /* PostsDataModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 404AFDA221AB79080042BEC1 /* PostsDataModel.swift */; };
+		404AFDA821AB7F570042BEC1 /* beefboard.xcdatamodeld in Sources */ = {isa = PBXBuildFile; fileRef = 404AFDA621AB7F570042BEC1 /* beefboard.xcdatamodeld */; };
+		404AFDE721AD57B80042BEC1 /* AuthModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 404AFDE621AD57B80042BEC1 /* AuthModel.swift */; };
+		404AFDE921AD5CEA0042BEC1 /* PostCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 404AFDE821AD5CEA0042BEC1 /* PostCell.swift */; };
 		40BB43B52176042C00B8850C /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 40BB43B42176042C00B8850C /* AppDelegate.swift */; };
 		40BB43B72176042C00B8850C /* LoginController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 40BB43B62176042C00B8850C /* LoginController.swift */; };
 		40BB43BA2176042C00B8850C /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 40BB43B82176042C00B8850C /* Main.storyboard */; };
@@ -45,6 +53,15 @@
 		4003E1DB2189B0500057DBB0 /* Api.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Api.swift; sourceTree = "<group>"; };
 		400BF3B0218BD3DC004E2101 /* PostsController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PostsController.swift; sourceTree = "<group>"; };
 		400BF3B2218BD417004E2101 /* PostDetailsController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PostDetailsController.swift; sourceTree = "<group>"; };
+		404AFD9821A9D09D0042BEC1 /* NewPostController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NewPostController.swift; sourceTree = "<group>"; };
+		404AFD9A21AB27210042BEC1 /* Theme.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Theme.swift; sourceTree = "<group>"; };
+		404AFD9C21AB2F840042BEC1 /* RegistrationController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RegistrationController.swift; sourceTree = "<group>"; };
+		404AFD9E21AB39CF0042BEC1 /* LoginModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LoginModel.swift; sourceTree = "<group>"; };
+		404AFDA121AB6C730042BEC1 /* en */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = en; path = en.lproj/Main.strings; sourceTree = "<group>"; };
+		404AFDA221AB79080042BEC1 /* PostsDataModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PostsDataModel.swift; sourceTree = "<group>"; };
+		404AFDA721AB7F570042BEC1 /* Posts.xcdatamodel */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcdatamodel; path = Posts.xcdatamodel; sourceTree = "<group>"; };
+		404AFDE621AD57B80042BEC1 /* AuthModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AuthModel.swift; sourceTree = "<group>"; };
+		404AFDE821AD5CEA0042BEC1 /* PostCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PostCell.swift; sourceTree = "<group>"; };
 		40BB43B12176042C00B8850C /* beefboard.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = beefboard.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		40BB43B42176042C00B8850C /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		40BB43B62176042C00B8850C /* LoginController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LoginController.swift; sourceTree = "<group>"; };
@@ -118,15 +135,23 @@
 			isa = PBXGroup;
 			children = (
 				40BB43B42176042C00B8850C /* AppDelegate.swift */,
+				404AFDA621AB7F570042BEC1 /* beefboard.xcdatamodeld */,
 				40BB43B62176042C00B8850C /* LoginController.swift */,
 				40BB43B82176042C00B8850C /* Main.storyboard */,
 				40BB43BB2176042D00B8850C /* Assets.xcassets */,
 				40BB43BD2176042D00B8850C /* LaunchScreen.storyboard */,
 				40BB43C02176042D00B8850C /* Info.plist */,
 				4003E1DB2189B0500057DBB0 /* Api.swift */,
+				404AFDE821AD5CEA0042BEC1 /* PostCell.swift */,
 				400BF3B0218BD3DC004E2101 /* PostsController.swift */,
+				404AFDA221AB79080042BEC1 /* PostsDataModel.swift */,
 				400BF3B2218BD417004E2101 /* PostDetailsController.swift */,
 				40F99CDE218C79AF0038882D /* ProfileController.swift */,
+				404AFDE621AD57B80042BEC1 /* AuthModel.swift */,
+				404AFD9821A9D09D0042BEC1 /* NewPostController.swift */,
+				404AFD9A21AB27210042BEC1 /* Theme.swift */,
+				404AFD9C21AB2F840042BEC1 /* RegistrationController.swift */,
+				404AFD9E21AB39CF0042BEC1 /* LoginModel.swift */,
 			);
 			path = beefboard;
 			sourceTree = "<group>";
@@ -307,6 +332,7 @@
 				"${SRCROOT}/Pods/Target Support Files/Pods-beefboard/Pods-beefboard-frameworks.sh",
 				"${BUILT_PRODUCTS_DIR}/Alamofire/Alamofire.framework",
 				"${BUILT_PRODUCTS_DIR}/AwaitKit/AwaitKit.framework",
+				"${BUILT_PRODUCTS_DIR}/ImageSlideshow/ImageSlideshow.framework",
 				"${BUILT_PRODUCTS_DIR}/Kingfisher/Kingfisher.framework",
 				"${BUILT_PRODUCTS_DIR}/PromiseKit/PromiseKit.framework",
 			);
@@ -316,6 +342,7 @@
 			outputPaths = (
 				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/Alamofire.framework",
 				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/AwaitKit.framework",
+				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/ImageSlideshow.framework",
 				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/Kingfisher.framework",
 				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/PromiseKit.framework",
 			);
@@ -354,11 +381,19 @@
 			buildActionMask = 2147483647;
 			files = (
 				4003E1DC2189B0500057DBB0 /* Api.swift in Sources */,
+				404AFD9D21AB2F840042BEC1 /* RegistrationController.swift in Sources */,
+				404AFD9B21AB27210042BEC1 /* Theme.swift in Sources */,
 				400BF3B3218BD417004E2101 /* PostDetailsController.swift in Sources */,
 				400BF3B1218BD3DC004E2101 /* PostsController.swift in Sources */,
+				404AFDA321AB79080042BEC1 /* PostsDataModel.swift in Sources */,
+				404AFD9F21AB39CF0042BEC1 /* LoginModel.swift in Sources */,
 				40BB43B72176042C00B8850C /* LoginController.swift in Sources */,
+				404AFDE721AD57B80042BEC1 /* AuthModel.swift in Sources */,
 				40BB43B52176042C00B8850C /* AppDelegate.swift in Sources */,
+				404AFD9921A9D09D0042BEC1 /* NewPostController.swift in Sources */,
 				40F99CDF218C79AF0038882D /* ProfileController.swift in Sources */,
+				404AFDA821AB7F570042BEC1 /* beefboard.xcdatamodeld in Sources */,
+				404AFDE921AD5CEA0042BEC1 /* PostCell.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -398,6 +433,7 @@
 			isa = PBXVariantGroup;
 			children = (
 				40BB43B92176042C00B8850C /* Base */,
+				404AFDA121AB6C730042BEC1 /* en */,
 			);
 			name = Main.storyboard;
 			sourceTree = "<group>";
@@ -697,6 +733,19 @@
 			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
+
+/* Begin XCVersionGroup section */
+		404AFDA621AB7F570042BEC1 /* beefboard.xcdatamodeld */ = {
+			isa = XCVersionGroup;
+			children = (
+				404AFDA721AB7F570042BEC1 /* Posts.xcdatamodel */,
+			);
+			currentVersion = 404AFDA721AB7F570042BEC1 /* Posts.xcdatamodel */;
+			path = beefboard.xcdatamodeld;
+			sourceTree = "<group>";
+			versionGroupType = wrapper.xcdatamodel;
+		};
+/* End XCVersionGroup section */
 	};
 	rootObject = 40BB43A92176042C00B8850C /* Project object */;
 }

@@ -7,24 +7,61 @@
 //
 
 import UIKit
+import ImageSlideshow
+import Kingfisher
 
 class PostDetailsController: UIViewController {
-
+    
+    var post: Post?
+    
+    @IBOutlet weak var scrollView: UIScrollView!
+    @IBOutlet weak var contentView: UIView!
+    @IBOutlet weak var slideshowHeight: NSLayoutConstraint!
+    @IBOutlet weak var titleLabel: UILabel!
+    @IBOutlet weak var dateLabel: UILabel!
+    @IBOutlet weak var contentLabel: UILabel!
+    @IBOutlet weak var imageSlideshow: ImageSlideshow!
+    
+    
+    @IBOutlet weak var viewPhotosButton: UIBarButtonItem!
     override func viewDidLoad() {
         super.viewDidLoad()
         
-        // Do any additional setup after loading the view.
+        
+        self.fillDetails()
     }
     
-
-    /*
-    // MARK: - Navigation
-
-    // In a storyboard-based application, you will often want to do a little preparation before navigation
-    override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
-        // Get the new view controller using segue.destination.
-        // Pass the selected object to the new view controller.
+    func fillDetails() {
+        if let postDetails = self.post {
+            self.titleLabel.text = postDetails.title
+            self.contentLabel.text = postDetails.content
+            
+            if postDetails.numImages > 0 {
+                var imageSources = [KingfisherSource]()
+                
+                for i in 0..<postDetails.numImages {
+                    if let source = KingfisherSource(
+                            urlString: BeefboardApi.getImageUrl(forPost: postDetails.id, forImage: i)
+                        ) {
+                        imageSources.append(source)
+                    }
+                }
+                
+                self.imageSlideshow.setImageInputs(imageSources)
+            }
+            
+            self.resizeView()
+        }
     }
-    */
-
+    
+    func resizeView() {
+        var height = self.slideshowHeight.constant;
+        height += self.titleLabel.frame.height + 16
+        height += self.dateLabel.frame.height + 16
+        height += self.contentLabel.frame.height + 16
+        
+        let size = CGSize(width: self.contentView.frame.width, height: height)
+        self.contentView.frame.size = size
+        self.scrollView.contentSize = size
+    }
 }

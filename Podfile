@@ -5,6 +5,8 @@ use_frameworks!
 
 target 'beefboard' do
     pod 'Alamofire', '~> 4.7'
+    pod 'ImageSlideshow', '~> 1.6'
+    pod 'ImageSlideshow/Kingfisher'
     pod 'Kingfisher', '~> 4.0'
     pod 'AwaitKit', '~> 5.0.1'
 end

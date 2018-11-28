@@ -7,34 +7,52 @@
 //
 
 import UIKit
+import AwaitKit
 
 class ProfileController: UIViewController {
     var isMe: Bool = false
-    var details: User?;
+    var details: User?
     
-    @IBOutlet weak var logoutButton: UIButton!
+    private var authSource = AuthModel()
+    
+    @IBOutlet weak var nameLabel: UILabel!
+    @IBOutlet weak var usernameLabel: UILabel!
+    
+    @IBOutlet weak var logoutButton: UIBarButtonItem!
     
     @IBAction func logoutAction(_ sender: Any) {
-        BeefboardApi.clearToken()
-        self.dismiss(animated: true, completion: nil)
+        self.doLogout()
     }
+    
     @IBAction func doneAction(_ sender: Any) {
         dismiss(animated: true, completion: nil)
     }
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        self.logoutButton.isHidden = !isMe
+        
+        self.authSource.delegate = self
+        
+        if !self.isMe {
+            self.logoutButton.isEnabled = false
+            self.logoutButton.tintColor = UIColor.clear
+        }
+        
+        if let userDetails = self.details {
+            nameLabel.text = "\(userDetails.firstName) \(userDetails.lastName)"
+            usernameLabel.text = "\(userDetails.username)"
+        }
     }
-
-    /*
-    // MARK: - Navigation
-
-    // In a storyboard-based application, you will often want to do a little preparation before navigation
-    override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
-        // Get the new view controller using segue.destination.
-        // Pass the selected object to the new view controller.
+    
+    func doLogout() {
+        self.authSource.logout()
     }
-    */
+}
 
+extension ProfileController: AuthModelDelegate {
+    func didReceiveAuth(auth: User?) {
+        self.dismiss(animated: true, completion: nil)
+    }
+    
+    func didReceiveAuthError(error: ApiError) {}
 }
