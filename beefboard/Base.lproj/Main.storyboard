@@ -90,6 +90,7 @@
                     </navigationItem>
                     <simulatedNavigationBarMetrics key="simulatedTopBarMetrics" prompted="NO"/>
                     <connections>
+                        <outlet property="loginButton" destination="18M-ue-vhM" id="7Gd-QB-bUC"/>
                         <outlet property="passwordInput" destination="xht-ZI-QDv" id="XoQ-T6-qwQ"/>
                         <outlet property="usernameInput" destination="yHO-lY-oMO" id="SME-Tu-r4a"/>
                     </connections>
@@ -257,7 +258,7 @@
                         <color key="backgroundColor" cocoaTouchSystemColor="groupTableViewBackgroundColor"/>
                         <inset key="separatorInset" minX="19" minY="0.0" maxX="4" maxY="0.0"/>
                         <prototypes>
-                            <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" preservesSuperviewLayoutMargins="YES" selectionStyle="default" indentationWidth="10" reuseIdentifier="postCell" rowHeight="280" id="h4l-Vb-UBd" customClass="PostCell" customModule="beefboard" customModuleProvider="target">
+                            <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" preservesSuperviewLayoutMargins="YES" selectionStyle="none" indentationWidth="10" reuseIdentifier="postCell" rowHeight="280" id="h4l-Vb-UBd" customClass="PostCell" customModule="beefboard" customModuleProvider="target">
                                 <rect key="frame" x="0.0" y="55.5" width="375" height="280"/>
                                 <autoresizingMask key="autoresizingMask"/>
                                 <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" preservesSuperviewLayoutMargins="YES" insetsLayoutMarginsFromSafeArea="NO" tableViewCell="h4l-Vb-UBd" id="xTf-Ob-OSd">

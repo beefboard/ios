@@ -9,8 +9,11 @@
 import UIKit
 
 class RegistrationController: UIViewController {
+    
+    private var registrationModel = RegistrationModel()
 
     @IBAction func signupAction(_ sender: Any) {
+        
     }
     
     @IBAction func cancelAction(_ sender: Any) {
@@ -30,23 +33,17 @@ class RegistrationController: UIViewController {
     
     override func viewDidLoad() {
         super.viewDidLoad()
+        
+        self.registrationModel.delegate = self
         self.disableSignup()
     }
     
     func disableSignup() {
         self.signupButton!.isEnabled = false;
     }
-    
-    
+}
 
-    /*
-    // MARK: - Navigation
-
-    // In a storyboard-based application, you will often want to do a little preparation before navigation
-    override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
-        // Get the new view controller using segue.destination.
-        // Pass the selected object to the new view controller.
-    }
-    */
-
+extension RegistrationController: RegistrationModelDelegate {
+    func didRegister() {}
+    func didRecieveRegistrationError(error: ApiError) {}
 }

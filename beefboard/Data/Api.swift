@@ -14,6 +14,11 @@ import Alamofire
 struct PostVotes: Decodable {
     let grade: Int
     let user: Int?
+    
+    public init(grade: Int, user: Int?) {
+        self.grade = grade
+        self.user = user
+    }
 }
 
 struct Post: Decodable {
@@ -26,6 +31,28 @@ struct Post: Decodable {
     let approved: Bool
     let pinned: Bool
     let votes: PostVotes
+    
+    public init(
+        id: String,
+        title: String,
+        content: String,
+        author: String,
+        date: Date,
+        numImages: Int,
+        approved: Bool,
+        pinned: Bool,
+        votes: PostVotes
+    ) {
+        self.id = id
+        self.title = title
+        self.content = content
+        self.author = author
+        self.date = date
+        self.numImages = numImages
+        self.approved = approved
+        self.pinned = pinned
+        self.votes = votes
+    }
 }
 
 struct PostsList: Decodable {
@@ -68,7 +95,7 @@ extension Formatter {
 class BeefboardApi {
     private static let TOKEN_KEY = "token"
     private static let TOKEN_HEADER = "x-access-token"
-    private static let BEEFBOARD_API_HOST = "https://api.beefboard.mooo.com/v1/"
+    private static let BEEFBOARD_API_HOST = "https://api.beefboard.mooo.com/v1"
     
     private static func getToken() -> String? {
         return UserDefaults.standard.string(forKey: BeefboardApi.TOKEN_KEY)
@@ -112,7 +139,7 @@ class BeefboardApi {
     }
     
     public static func getImageUrl(forPost postId: String, forImage imageId: Int) -> String {
-        return "\(BeefboardApi.BEEFBOARD_API_HOST)posts/\(postId)/images/\(imageId)"
+        return "\(BeefboardApi.BEEFBOARD_API_HOST)/posts/\(postId)/images/\(imageId)"
     }
     
     public static func login(username: String, password: String) -> Promise<Bool> {
@@ -124,6 +151,7 @@ class BeefboardApi {
             encoding: JSONEncoding.default,
             headers: buildHeaders()
         )
+        request.session.configuration.timeoutIntervalForRequest = 1
         
         return Promise{ seal in
             request
@@ -144,8 +172,8 @@ class BeefboardApi {
                             return seal.reject(self.checkErrorCode(code))
                         }
                         return seal.reject(error)
-                    case .failure(let error):
-                        return seal.reject(error)
+                    case .failure:
+                        return seal.reject(ApiError.connectionError)
                     }
                 }
         }
@@ -164,6 +192,7 @@ class BeefboardApi {
             encoding: JSONEncoding.default,
             headers: buildHeaders()
         )
+        request.session.configuration.timeoutIntervalForRequest = 1
         
         return Promise{ seal in
             request
@@ -187,6 +216,7 @@ class BeefboardApi {
             encoding: JSONEncoding.default,
             headers: buildHeaders()
         )
+        request.session.configuration.timeoutIntervalForRequest = 1
         
         return Promise{ seal in
             request
@@ -208,8 +238,8 @@ class BeefboardApi {
                             return seal.reject(self.checkErrorCode(code))
                         }
                         return seal.reject(error)
-                    case .failure(let error):
-                        return seal.reject(error)
+                    case .failure:
+                        return seal.reject(ApiError.connectionError)
                     }
             }
         }
@@ -227,6 +257,7 @@ class BeefboardApi {
             encoding: JSONEncoding.default,
             headers: buildHeaders()
         )
+        request.session.configuration.timeoutIntervalForRequest = 1
         
         return Promise{ seal in
             request
@@ -248,8 +279,8 @@ class BeefboardApi {
                             return seal.reject(self.checkErrorCode(code))
                         }
                         return seal.reject(error)
-                    case .failure(let error):
-                        return seal.reject(error)
+                    case .failure:
+                        return seal.reject(ApiError.connectionError)
                     }
             }
         }
@@ -261,6 +292,7 @@ class BeefboardApi {
             encoding: JSONEncoding.default,
             headers: buildHeaders()
         )
+        request.session.configuration.timeoutIntervalForRequest = 1
         
         let decoder = JSONDecoder()
         decoder.dateDecodingStrategy = .custom({ (decoder) -> Date in
@@ -303,8 +335,8 @@ class BeefboardApi {
                             return seal.reject(self.checkErrorCode(code))
                         }
                         return seal.reject(error)
-                    case .failure(let error):
-                        return seal.reject(error)
+                    case .failure:
+                        return seal.reject(ApiError.connectionError)
                     }
             }
         }

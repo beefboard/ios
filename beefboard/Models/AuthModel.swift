@@ -33,12 +33,12 @@ class AuthModel {
         }
         
         return async {
-            print("Recieving auth")
+            print("Retrieiving auth")
             do {
                 self.currentAuth = try await(BeefboardApi.getAuth())
-            } catch is ApiError {
+            } catch (ApiError.invalidCredentials) {
                 self.currentAuth = nil
-            }
+            } catch {}
             
             self.saveAuth()
             

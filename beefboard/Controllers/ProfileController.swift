@@ -45,7 +45,16 @@ class ProfileController: UIViewController {
     }
     
     func doLogout() {
-        self.authSource.logout()
+        let dialog = UIAlertController(
+            title: "Logout",
+            message: "Are you sure you would like to logout",
+            preferredStyle: .alert
+        )
+        dialog.addAction(UIAlertAction(title: "Yes", style: .default, handler: { (action) in
+            self.authSource.logout()
+        }))
+        dialog.addAction(UIAlertAction(title: "Cancel", style: .default, handler: nil))
+        self.present(dialog, animated: false, completion: nil)
     }
 }
 

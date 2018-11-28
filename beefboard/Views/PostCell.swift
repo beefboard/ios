@@ -26,7 +26,13 @@ class PostCell: UITableViewCell {
             self.mainImage.contentMode = .scaleAspectFill
             self.mainImage.clipsToBounds = true
             self.mainImage.kf.indicatorType = .activity
-            self.mainImage.kf.setImage(with: URL(string: BeefboardApi.getImageUrl(forPost: post.id, forImage: 0)))
+            let imageResource = ImageResource(
+                downloadURL: URL(
+                    string: BeefboardApi.getImageUrl(forPost: post.id, forImage: 0)
+                )!,
+                cacheKey:"\(post.id)0"
+            )
+            self.mainImage.kf.setImage(with: imageResource)
         } else {
             self.mainImage.kf.setImage(with: nil)
         }

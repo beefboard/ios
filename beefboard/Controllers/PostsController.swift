@@ -1,6 +1,9 @@
 //
 //  PostsController.swift
-//  beefboard
+//
+// The "main" page of Beefboard, shows a list
+// of posts in chronological order
+//
 //
 //  Created by Oliver on 02/11/2018.
 //  Copyright © 2018 Oliver Bell. All rights reserved.
@@ -22,6 +25,7 @@ class PostsController: UITableViewController {
     private var posts: [Post] = []
     
     private var refresher: UIRefreshControl?
+    private var activityIndicator: UIActivityIndicatorView!
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -30,6 +34,13 @@ class PostsController: UITableViewController {
         self.authSource.delegate = self
         
         self.refreshControl?.addTarget(self, action: #selector(PostsController.refreshPosts(refreshControl:)), for: UIControl.Event.valueChanged)
+        
+        self.activityIndicator = UIActivityIndicatorView(style: .whiteLarge)
+        self.activityIndicator.color = UIColor.darkGray
+        self.activityIndicator.center = self.tableView.center
+        self.activityIndicator.hidesWhenStopped = true
+        self.activityIndicator.stopAnimating()
+        self.navigationController?.view.addSubview(activityIndicator)
         
         self.showBarItemsBusy()
         self.postsDataSource.refreshPosts()
@@ -145,22 +156,30 @@ class PostsController: UITableViewController {
 
 
 extension PostsController: PostsDataModelDelegate {
-    func didRecievePosts(posts: [Post], pinnedPosts: [Post]) {
-        self.posts = posts
-        self.pinnedPosts = pinnedPosts
-        self.tableView.reloadData()
-        
+    
+    func stopLoadingIcons() {
+        self.activityIndicator.stopAnimating()
         // Stop the refresh icon, if it exists
         self.refresher?.endRefreshing()
         self.refresher = nil
     }
     
+    func didRecievePosts(posts: [Post], pinnedPosts: [Post]) {
+        self.stopLoadingIcons()
+        
+        self.posts = posts
+        self.pinnedPosts = pinnedPosts
+        self.tableView.reloadData()
+    }
+    
     func didFailReceiveWithError(error: ApiError) {
+        self.stopLoadingIcons()
+        
         switch (error) {
         case ApiError.connectionError:
-            return
+            self.showError(title: "Could not load posts", message: "Connection error")
         default:
-            return
+            self.showError(title: "Could not load posts", message: "Unknown error")
         }
     }
 }
@@ -196,6 +215,7 @@ extension PostsController: AuthModelDelegate {
     }
     
     func didReceiveAuthError(error: ApiError) {
+        
         switch (error) {
         case ApiError.connectionError:
             return
