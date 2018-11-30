@@ -204,13 +204,7 @@ class BeefboardApi {
         }
     }
     
-    public static func getUser(username: String) -> Promise<User?> {
-        if !self.hasToken() {
-            return Promise{ seal in
-                seal.reject(ApiError.invalidCredentials)
-            }
-        }
-        
+    public static func getUser(username: String) -> Promise<User?> {        
         let request = Alamofire.request(
             buildUrl(to: "/accounts/" + username),
             encoding: JSONEncoding.default,
@@ -330,6 +324,56 @@ class BeefboardApi {
                         }
                         
                         return seal.fulfill(postsList!.posts)
+                    case .failure(let error as AFError):
+                        if let code = error.responseCode {
+                            return seal.reject(self.checkErrorCode(code))
+                        }
+                        return seal.reject(error)
+                    case .failure:
+                        return seal.reject(ApiError.connectionError)
+                    }
+            }
+        }
+    }
+    
+    public static func register(
+        username: String,
+        password: String,
+        email: String,
+        firstName: String,
+        lastName: String
+    ) -> Promise<Bool> {
+        
+        let request = Alamofire.request(
+            buildUrl(to: "/accounts"),
+            method: .post,
+            parameters: [
+                "username": username,
+                "password": password,
+                "email": email,
+                "firstName": firstName,
+                "lastName": lastName
+            ],
+            encoding: JSONEncoding.default,
+            headers: buildHeaders()
+        )
+        
+        request.session.configuration.timeoutIntervalForRequest = 1
+        
+        return Promise{ seal in
+            request
+                .validate()
+                .responseJSON{ response in
+                    switch response.result {
+                    case .success(let json):
+                        guard let json = json as? [String: Any] else {
+                            return seal.reject(ApiError.invalidResponse)
+                        }
+                        guard let success = json["success"] as? Bool else {
+                            return seal.reject(ApiError.invalidResponse)
+                        }
+                        
+                        seal.fulfill(success)
                     case .failure(let error as AFError):
                         if let code = error.responseCode {
                             return seal.reject(self.checkErrorCode(code))
