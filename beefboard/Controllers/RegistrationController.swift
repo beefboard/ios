@@ -11,9 +11,10 @@ import UIKit
 class RegistrationController: UIViewController {
     
     private var registrationModel = RegistrationModel()
+    private var authModel = AuthModel()
 
     @IBAction func signupAction(_ sender: Any) {
-        
+        self.handleSignupClicked()
     }
     
     @IBAction func cancelAction(_ sender: Any) {
@@ -42,12 +43,14 @@ class RegistrationController: UIViewController {
     private var emailValid = false
     private var passwordsValid = false
     
-    private var loading = true
+    private var loading = false
     
     override func viewDidLoad() {
         super.viewDidLoad()
         
         registrationModel.delegate = self
+        authModel.delegate = self
+        
         updateForm()
         
         
@@ -82,13 +85,18 @@ class RegistrationController: UIViewController {
         })
     }
     
+    func showError(title: String, message: String, completion: (() -> Void)?) {
+        let alert = UIAlertController(title: title, message: message, preferredStyle: .alert)
+        alert.addAction(UIAlertAction(title: "Ok", style: .default, handler: nil))
+        self.present(alert, animated: false, completion: completion)
+    }
+    
     @objc
     func usernameUpdated() {
         if let checkUsername = self.usernameInput.text {
             DispatchQueue.main.asyncAfter(deadline: .now() + .milliseconds(100)) {
                 // Only run this check if the username has not changed
                 if self.usernameInput.text == checkUsername {
-                    print("Checking \(checkUsername)")
                     self.registrationModel.checkUsername(username: checkUsername)
                 }
             }
@@ -146,6 +154,7 @@ class RegistrationController: UIViewController {
             self.firstnameInput.text!.count > 0
             && self.lastnameInput.text!.count > 0
         
+        
         // Only set the button enabled if we have no errors
         self.signupButton!.isEnabled = (
             haveUsername && !self.usernameTaken
@@ -185,7 +194,6 @@ class RegistrationController: UIViewController {
 
 extension RegistrationController: RegistrationModelDelegate {
     func didReceiveUsernameInfo(taken: Bool) {
-        print("Username taken: \(taken)")
         self.usernameTaken = taken
         self.updateForm()
     }
@@ -201,7 +209,7 @@ extension RegistrationController: RegistrationModelDelegate {
     }
     
     func didRegister(username: String, password: String) {
-        
+        self.authModel.login(username: username, password: password)
     }
     
     func didRecieveRegistrationError(error: ApiError) {
@@ -212,9 +220,14 @@ extension RegistrationController: RegistrationModelDelegate {
 
 extension RegistrationController: AuthModelDelegate {
     func didReceiveAuth(auth: User?) {
+        self.dismiss(animated: true, completion: nil)
     }
     
     func didReceiveAuthError(error: ApiError) {
-        
+        self.showError(
+            title: "Login error",
+            message: "Could not log into account",
+            completion: nil
+        )
     }
 }

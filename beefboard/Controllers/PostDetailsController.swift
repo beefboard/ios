@@ -60,6 +60,8 @@ class PostDetailsController: UIViewController {
         height += self.dateLabel.frame.height + 16
         height += self.contentLabel.frame.height + 16
         
+        print(height)
+        
         let size = CGSize(width: self.contentView.frame.width, height: height)
         self.contentView.frame.size = size
         self.scrollView.contentSize = size
