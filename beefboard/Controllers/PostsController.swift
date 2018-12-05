@@ -96,7 +96,7 @@ class PostsController: UITableViewController {
         self.navigationBar.rightBarButtonItem = nil
     }
     
-    func tableView(tableView: UITableView, titleForHeaderInSection section: Int) -> String? {
+    override func tableView(_ tableView: UITableView, titleForHeaderInSection section: Int) -> String? {
         print("Getting header for \(section)")
         switch section {
         case 0:
