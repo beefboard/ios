@@ -10,6 +10,7 @@
 		4003E1DC2189B0500057DBB0 /* Api.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4003E1DB2189B0500057DBB0 /* Api.swift */; };
 		400BF3B1218BD3DC004E2101 /* PostsController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 400BF3B0218BD3DC004E2101 /* PostsController.swift */; };
 		400BF3B3218BD417004E2101 /* PostDetailsController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 400BF3B2218BD417004E2101 /* PostDetailsController.swift */; };
+		4042155421C31253005093DA /* SplitViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4042155321C31253005093DA /* SplitViewController.swift */; };
 		404AFD9921A9D09D0042BEC1 /* NewPostController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 404AFD9821A9D09D0042BEC1 /* NewPostController.swift */; };
 		404AFD9B21AB27210042BEC1 /* Theme.swift in Sources */ = {isa = PBXBuildFile; fileRef = 404AFD9A21AB27210042BEC1 /* Theme.swift */; };
 		404AFD9D21AB2F840042BEC1 /* RegistrationController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 404AFD9C21AB2F840042BEC1 /* RegistrationController.swift */; };
@@ -53,6 +54,7 @@
 		4003E1DB2189B0500057DBB0 /* Api.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Api.swift; sourceTree = "<group>"; };
 		400BF3B0218BD3DC004E2101 /* PostsController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PostsController.swift; sourceTree = "<group>"; };
 		400BF3B2218BD417004E2101 /* PostDetailsController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PostDetailsController.swift; sourceTree = "<group>"; };
+		4042155321C31253005093DA /* SplitViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SplitViewController.swift; sourceTree = "<group>"; };
 		404AFD9821A9D09D0042BEC1 /* NewPostController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NewPostController.swift; sourceTree = "<group>"; };
 		404AFD9A21AB27210042BEC1 /* Theme.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Theme.swift; sourceTree = "<group>"; };
 		404AFD9C21AB2F840042BEC1 /* RegistrationController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RegistrationController.swift; sourceTree = "<group>"; };
@@ -142,6 +144,7 @@
 			isa = PBXGroup;
 			children = (
 				404AFDE821AD5CEA0042BEC1 /* PostCell.swift */,
+				4042155321C31253005093DA /* SplitViewController.swift */,
 			);
 			path = Views;
 			sourceTree = "<group>";
@@ -364,8 +367,13 @@
 				"${SRCROOT}/Pods/Target Support Files/Pods-beefboard/Pods-beefboard-frameworks.sh",
 				"${BUILT_PRODUCTS_DIR}/Alamofire/Alamofire.framework",
 				"${BUILT_PRODUCTS_DIR}/AwaitKit/AwaitKit.framework",
+				"${BUILT_PRODUCTS_DIR}/BSGridCollectionViewLayout/BSGridCollectionViewLayout.framework",
+				"${BUILT_PRODUCTS_DIR}/BSImagePicker/BSImagePicker.framework",
+				"${BUILT_PRODUCTS_DIR}/BSImageView/BSImageView.framework",
 				"${BUILT_PRODUCTS_DIR}/ImageSlideshow/ImageSlideshow.framework",
+				"${BUILT_PRODUCTS_DIR}/JGProgressHUD/JGProgressHUD.framework",
 				"${BUILT_PRODUCTS_DIR}/Kingfisher/Kingfisher.framework",
+				"${BUILT_PRODUCTS_DIR}/OpalImagePicker/OpalImagePicker.framework",
 				"${BUILT_PRODUCTS_DIR}/PromiseKit/PromiseKit.framework",
 			);
 			name = "[CP] Embed Pods Frameworks";
@@ -374,8 +382,13 @@
 			outputPaths = (
 				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/Alamofire.framework",
 				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/AwaitKit.framework",
+				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/BSGridCollectionViewLayout.framework",
+				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/BSImagePicker.framework",
+				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/BSImageView.framework",
 				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/ImageSlideshow.framework",
+				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/JGProgressHUD.framework",
 				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/Kingfisher.framework",
+				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/OpalImagePicker.framework",
 				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/PromiseKit.framework",
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -417,6 +430,7 @@
 				404AFD9B21AB27210042BEC1 /* Theme.swift in Sources */,
 				400BF3B3218BD417004E2101 /* PostDetailsController.swift in Sources */,
 				400BF3B1218BD3DC004E2101 /* PostsController.swift in Sources */,
+				4042155421C31253005093DA /* SplitViewController.swift in Sources */,
 				404AFDA321AB79080042BEC1 /* PostsDataModel.swift in Sources */,
 				40BB43B72176042C00B8850C /* LoginController.swift in Sources */,
 				404AFDE721AD57B80042BEC1 /* AuthModel.swift in Sources */,
@@ -616,7 +630,7 @@
 				PRODUCT_BUNDLE_IDENTIFIER = uk.ac.coventry.bello.beefboard;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_VERSION = 4.2;
-				TARGETED_DEVICE_FAMILY = 2;
+				TARGETED_DEVICE_FAMILY = "1,2";
 			};
 			name = Debug;
 		};
@@ -639,7 +653,7 @@
 				PRODUCT_BUNDLE_IDENTIFIER = uk.ac.coventry.bello.beefboard;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_VERSION = 4.2;
-				TARGETED_DEVICE_FAMILY = 2;
+				TARGETED_DEVICE_FAMILY = "1,2";
 			};
 			name = Release;
 		};

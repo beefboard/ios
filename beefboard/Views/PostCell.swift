@@ -13,7 +13,9 @@ class PostCell: UITableViewCell {
     @IBOutlet weak var authorLabel: UILabel!
     @IBOutlet weak var contentLabel: UILabel!
     @IBOutlet weak var titleLabel: UILabel!
+    
     @IBOutlet weak var mainImage: UIImageView!
+    @IBOutlet weak var imageHeight: NSLayoutConstraint!
     
     static let identifier = "postCell"
     
@@ -21,6 +23,7 @@ class PostCell: UITableViewCell {
         self.titleLabel?.text = post.title
         self.contentLabel?.text = post.content
         self.authorLabel?.text = post.author
+        
         
         if post.numImages > 0 {
             self.mainImage.contentMode = .scaleAspectFill
@@ -33,8 +36,10 @@ class PostCell: UITableViewCell {
                 cacheKey:"\(post.id)0"
             )
             self.mainImage.kf.setImage(with: imageResource)
+            self.imageHeight.constant = 200
         } else {
             self.mainImage.kf.setImage(with: nil)
+            self.imageHeight.constant = 30
         }
     }
 }

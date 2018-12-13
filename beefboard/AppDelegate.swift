@@ -10,14 +10,26 @@ import UIKit
 import CoreData
 
 @UIApplicationMain
-class AppDelegate: UIResponder, UIApplicationDelegate {
+class AppDelegate: UIResponder, UIApplicationDelegate, UISplitViewControllerDelegate {
 
     var window: UIWindow?
 
 
     func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]?) -> Bool {
         //Theme.defaultTheme()
+        
+        let splitViewController = self.window!.rootViewController as! UISplitViewController
+        splitViewController.delegate = self
+        
+        // Fix UI on ipads in portrait
+        splitViewController.preferredDisplayMode = .allVisible
+        
         return true
+    }
+    
+    /* Ensure that the split view controller starts open */
+    func splitViewController(_ svc: UISplitViewController, collapseSecondary secondaryViewController: UIViewController, onto primaryViewController: UIViewController) -> Bool{
+        return false;
     }
 
     func applicationWillResignActive(_ application: UIApplication) {

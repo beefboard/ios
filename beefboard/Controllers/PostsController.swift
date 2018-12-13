@@ -30,6 +30,12 @@ class PostsController: UITableViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         
+        // Set navigation bar as large titles
+        self.navigationController?.navigationBar.prefersLargeTitles = true
+        
+        // Allow peek and poping
+        self.registerForPreviewing(with: self, sourceView: tableView)
+        
         self.postsDataSource.delegate = self
         self.authSource.delegate = self
         
@@ -60,6 +66,7 @@ class PostsController: UITableViewController {
     @objc func openCreate() {
         let storyBoard: UIStoryboard = UIStoryboard(name: "Main", bundle: nil)
         let view = storyBoard.instantiateViewController(withIdentifier: "newPost") as! NewPostController
+        
         self.presentView(of: view)
     }
     
@@ -82,6 +89,19 @@ class PostsController: UITableViewController {
         self.postsDataSource.refreshPosts(excludingCache: true)
     }
     
+    func getPost(at indexPath: IndexPath) -> Post? {
+        var post: Post? = nil
+        
+        switch(indexPath.section) {
+        case 0:
+            post = self.pinnedPosts[indexPath.row]
+        default:
+            post = self.posts[indexPath.row]
+        }
+        
+        return post
+    }
+    
     func showError(title: String, message: String) {
         let alert = UIAlertController(title: title, message: message, preferredStyle: .alert)
         alert.addAction(UIAlertAction(title: "Ok", style: .default, handler: nil))
@@ -97,7 +117,6 @@ class PostsController: UITableViewController {
     }
     
     override func tableView(_ tableView: UITableView, titleForHeaderInSection section: Int) -> String? {
-        print("Getting header for \(section)")
         switch section {
         case 0:
             return "Pinned"
@@ -123,16 +142,21 @@ class PostsController: UITableViewController {
         
     }
     
+    override func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
+        // Set the row hight depending on if the row has images
+        if let post = self.getPost(at: indexPath) {
+            if post.numImages > 0 {
+                return 280
+            }
+        }
+        
+        return 120
+    }
+    
     override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let cell = tableView.dequeueReusableCell(withIdentifier: PostCell.identifier, for: indexPath) as! PostCell
         
-        var post: Post? = nil
-        switch(indexPath.section) {
-        case 0:
-            post = self.pinnedPosts[indexPath.row]
-        default:
-            post = self.posts[indexPath.row]
-        }
+        let post = self.getPost(at: indexPath)
         
         cell.configureCell(with: post!)
 
@@ -140,12 +164,16 @@ class PostsController: UITableViewController {
     }
     
     override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
+        // When a post is clicked, that post will try to be loaded.
+        // We need to pass the post data to the controller for
+        // viewing that post
         if segue.identifier == "openPost" {
+            // Unwrappers
             if let indexPath = self.tableView.indexPathForSelectedRow {
                 if let navigationController = segue.destination as? UINavigationController {
                     if let postDetailsController = navigationController.topViewController as? PostDetailsController {
-                        let posts = indexPath.section == 0 ? self.pinnedPosts : self.posts
-                        postDetailsController.post = posts[indexPath.row]
+                        // Find the post
+                        postDetailsController.post = self.getPost(at: indexPath)
                     }
                 }
             }
@@ -154,7 +182,39 @@ class PostsController: UITableViewController {
 
 }
 
+extension PostsController: UIViewControllerPreviewingDelegate {
+    /**
+     * Create a post details controller for the
+     * given index path
+     **/
+    private func createPostDetails(for indexPath: IndexPath) -> PostDetailsController {
+        let post = self.getPost(at: indexPath)
+        
+        let storyBoard: UIStoryboard = UIStoryboard(name: "Main", bundle: nil)
+        let detailsController = storyBoard.instantiateViewController(withIdentifier: "postDetails") as! PostDetailsController
+        detailsController.post = post
+        
+        return detailsController
+    }
+    
+    func previewingContext(_ previewingContext: UIViewControllerPreviewing, viewControllerForLocation location: CGPoint) -> UIViewController? {
+        guard let indexPath = tableView.indexPathForRow(at: location) else {
+            return nil
+        }
+        
+        self.tableView.selectRow(at: indexPath, animated: false, scrollPosition: .none)
+        return nil
+    }
+    
+    func previewingContext(_ previewingContext: UIViewControllerPreviewing, commit viewControllerToCommit: UIViewController) {
+        self.navigationController!.pushViewController(viewControllerToCommit, animated: true)
+        
+    }
+    
+    
+}
 
+// Handle all received posts data
 extension PostsController: PostsDataModelDelegate {
     
     func stopLoadingIcons() {
@@ -172,7 +232,7 @@ extension PostsController: PostsDataModelDelegate {
         self.tableView.reloadData()
     }
     
-    func didFailReceiveWithError(error: ApiError) {
+    func didFailReceive(with error: ApiError) {
         self.stopLoadingIcons()
         
         switch (error) {
@@ -182,6 +242,11 @@ extension PostsController: PostsDataModelDelegate {
             self.showError(title: "Could not load posts", message: "Unknown error")
         }
     }
+    
+    
+    func didCreatePost(post: Post) {}
+    func didCreatePostProgress(progress: Double) {}
+    func didFailCreatePost(with: ApiError) {}
 }
 
 extension PostsController: AuthModelDelegate {
@@ -204,8 +269,6 @@ extension PostsController: AuthModelDelegate {
     func didReceiveAuth(auth: User?) {
         self.auth = auth
         
-        print("Recieived auth: \(auth)")
-        
         if auth == nil {
             self.showLoginAction()
         } else {
@@ -215,7 +278,6 @@ extension PostsController: AuthModelDelegate {
     }
     
     func didReceiveAuthError(error: ApiError) {
-        
         switch (error) {
         case ApiError.connectionError:
             return

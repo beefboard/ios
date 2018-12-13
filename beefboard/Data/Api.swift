@@ -96,6 +96,9 @@ class BeefboardApi {
     private static let TOKEN_KEY = "token"
     private static let TOKEN_HEADER = "x-access-token"
     private static let BEEFBOARD_API_HOST = "https://api.beefboard.mooo.com/v1"
+    //private static let BEEFBOARD_API_HOST = "http://localhost:2832/v1"
+    
+    private static let TIMEOUT = 3.0
     
     private static func getToken() -> String? {
         return UserDefaults.standard.string(forKey: BeefboardApi.TOKEN_KEY)
@@ -151,7 +154,7 @@ class BeefboardApi {
             encoding: JSONEncoding.default,
             headers: buildHeaders()
         )
-        request.session.configuration.timeoutIntervalForRequest = 1
+        request.session.configuration.timeoutIntervalForRequest = TIMEOUT
         
         return Promise{ seal in
             request
@@ -192,7 +195,7 @@ class BeefboardApi {
             encoding: JSONEncoding.default,
             headers: buildHeaders()
         )
-        request.session.configuration.timeoutIntervalForRequest = 1
+        request.session.configuration.timeoutIntervalForRequest = TIMEOUT
         
         return Promise{ seal in
             request
@@ -210,7 +213,7 @@ class BeefboardApi {
             encoding: JSONEncoding.default,
             headers: buildHeaders()
         )
-        request.session.configuration.timeoutIntervalForRequest = 1
+        request.session.configuration.timeoutIntervalForRequest = TIMEOUT
         
         return Promise{ seal in
             request
@@ -251,7 +254,7 @@ class BeefboardApi {
             encoding: JSONEncoding.default,
             headers: buildHeaders()
         )
-        request.session.configuration.timeoutIntervalForRequest = 1
+        request.session.configuration.timeoutIntervalForRequest = TIMEOUT
         
         return Promise{ seal in
             request
@@ -286,7 +289,7 @@ class BeefboardApi {
             encoding: JSONEncoding.default,
             headers: buildHeaders()
         )
-        request.session.configuration.timeoutIntervalForRequest = 1
+        request.session.configuration.timeoutIntervalForRequest = TIMEOUT
         
         let decoder = JSONDecoder()
         decoder.dateDecodingStrategy = .custom({ (decoder) -> Date in
@@ -336,6 +339,60 @@ class BeefboardApi {
         }
     }
     
+    public static func getPost(id: String) -> Promise<Post> {
+        let request = Alamofire.request(
+            buildUrl(to: "/posts/\(id)"),
+            encoding: JSONEncoding.default,
+            headers: buildHeaders()
+        )
+        request.session.configuration.timeoutIntervalForRequest = TIMEOUT
+        
+        let decoder = JSONDecoder()
+        decoder.dateDecodingStrategy = .custom({ (decoder) -> Date in
+            let container = try decoder.singleValueContainer()
+            let dateStr = try container.decode(String.self)
+            
+            let formatter = DateFormatter()
+            formatter.calendar = Calendar(identifier: .iso8601)
+            formatter.locale = Locale(identifier: "en_US_POSIX")
+            formatter.timeZone = TimeZone(secondsFromGMT: 0)
+            formatter.dateFormat = "yyyy-MM-dd'T'HH:mm:ss.SSSXXXXX"
+            if let date = formatter.date(from: dateStr) {
+                return date
+            }
+            formatter.dateFormat = "yyyy-MM-dd'T'HH:mm:ssXXXXX"
+            if let date = formatter.date(from: dateStr) {
+                return date
+            }
+            throw DateError.invalidDate
+        })
+        
+        return Promise{ seal in
+            request
+                .validate()
+                .responseData{ response in
+                    switch response.result {
+                    case .success(let data):
+                        do {
+                            let post = try decoder.decode(Post.self, from: data)
+                            return seal.fulfill(post)
+                        } catch (let e) {
+                            print(e)
+                            return seal.reject(ApiError.invalidResponse)
+                        }
+                        
+                    case .failure(let error as AFError):
+                        if let code = error.responseCode {
+                            return seal.reject(self.checkErrorCode(code))
+                        }
+                        return seal.reject(error)
+                    case .failure:
+                        return seal.reject(ApiError.connectionError)
+                    }
+            }
+        }
+    }
+    
     public static func register(
         username: String,
         password: String,
@@ -358,7 +415,7 @@ class BeefboardApi {
             headers: buildHeaders()
         )
         
-        request.session.configuration.timeoutIntervalForRequest = 1
+        request.session.configuration.timeoutIntervalForRequest = TIMEOUT
         
         return Promise{ seal in
             request
@@ -383,6 +440,68 @@ class BeefboardApi {
                         return seal.reject(ApiError.connectionError)
                     }
             }
+        }
+    }
+    
+    public static func newPost(
+        title: String,
+        content: String,
+        images: [UIImage],
+        progressHandler: @escaping (Double) -> ()
+    ) -> Promise<String> {
+        var headers = self.buildHeaders()
+        headers["Content-type"] = "multipart/form-data"
+        return Promise{ seal in
+            Alamofire.upload(
+                multipartFormData: { (multipartFormData) in
+                    for image in images {
+                        let imgData = image.jpegData(compressionQuality: 0.5)!
+                        multipartFormData.append(imgData, withName: "images", fileName: "test.jpg", mimeType: "image/jpeg")
+                    }
+                    
+                    multipartFormData.append(title.data(using: .utf8)!, withName: "title")
+                    multipartFormData.append(content.data(using: .utf8)!, withName: "content")
+                },
+                usingThreshold: UInt64.init(),
+                to: self.buildUrl(to: "/posts"),
+                method: .post,
+                headers: headers,
+                encodingCompletion: { encodingResult in
+                    switch encodingResult {
+                    case .success(let upload, _, _):
+                        upload.responseJSON { response in
+                            switch response.result {
+                            case .success(let json):
+                                guard let json = json as? [String: Any] else {
+                                    return seal.reject(ApiError.invalidResponse)
+                                }
+                                guard let postId = json["id"] as? String else {
+                                    return seal.reject(ApiError.invalidResponse)
+                                }
+                            
+                                seal.fulfill(postId)
+                            case .failure(let error as AFError):
+                                if let code = error.responseCode {
+                                    return seal.reject(self.checkErrorCode(code))
+                                }
+                                return seal.reject(error)
+                            case .failure:
+                                return seal.reject(ApiError.connectionError)
+                            }
+                        }
+                        upload.uploadProgress { progress in
+                            progressHandler(progress.fractionCompleted)
+                        }
+                    case .failure(let error as AFError):
+                        if let code = error.responseCode {
+                            return seal.reject(self.checkErrorCode(code))
+                        }
+                        return seal.reject(error)
+                    case .failure:
+                        return seal.reject(ApiError.connectionError)
+                    }
+                }
+            )
         }
     }
 }

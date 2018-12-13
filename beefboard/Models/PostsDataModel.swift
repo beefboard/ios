@@ -12,7 +12,11 @@ import CoreData
 
 protocol PostsDataModelDelegate: class {
     func didRecievePosts(posts: [Post], pinnedPosts: [Post])
-    func didFailReceiveWithError(error: ApiError)
+    func didFailReceive(with error: ApiError)
+    
+    func didCreatePost(post: Post)
+    func didCreatePostProgress(progress: Double)
+    func didFailCreatePost(with error: ApiError)
 }
 
 class PostsDataModel {
@@ -62,7 +66,7 @@ class PostsDataModel {
                 allPosts = try await(BeefboardApi.getPosts())
             } catch let error as ApiError {
                 DispatchQueue.main.async {
-                    self.delegate?.didFailReceiveWithError(error: error)
+                    self.delegate?.didFailReceive(with: error)
                 }
                 return
             }
@@ -71,6 +75,36 @@ class PostsDataModel {
             DispatchQueue.main.async {
                 self.cachePosts(posts: allPosts)
                 self.notifyPosts(allPosts)
+            }
+        }
+    }
+    
+    func createPost(title: String, content: String, images: [UIImage]) {
+        // Create a new post by sending the data to the API.
+        // new posts 
+        async {
+            do {
+                let id = try await(
+                    BeefboardApi.newPost(
+                        title: title,
+                        content: content,
+                        images: images,
+                        progressHandler: { (progress) in
+                            DispatchQueue.main.async {
+                                self.delegate?.didCreatePostProgress(progress: progress)
+                            }
+                        }
+                    )
+                )
+                let post = try await(BeefboardApi.getPost(id: id))
+                DispatchQueue.main.async {
+                    self.delegate?.didCreatePost(post: post)
+                }
+                
+            } catch let error as ApiError {
+                DispatchQueue.main.async {
+                    self.delegate?.didFailCreatePost(with: error)
+                }
             }
         }
     }
