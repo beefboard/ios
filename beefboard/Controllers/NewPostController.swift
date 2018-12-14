@@ -13,6 +13,10 @@ import Photos
 import BSImagePicker
 import JGProgressHUD
 
+/**
+ * View Controller for handling new
+ * post creation
+ */
 class NewPostController: UIViewController {
     var images: [UIImage] = []
     var hud: JGProgressHUD? = nil
@@ -21,6 +25,8 @@ class NewPostController: UIViewController {
     let postsDataModel = PostsDataModel()
     
     var textViewPlaceholder = false
+    
+    // MARK: - View bindings
 
     @IBOutlet weak var imageSlideshow: ImageSlideshow!
     @IBOutlet weak var slideshowHeight: NSLayoutConstraint!
@@ -32,9 +38,11 @@ class NewPostController: UIViewController {
     
     @IBOutlet weak var postButton: UIBarButtonItem!
     
+    @IBOutlet weak var toolbarBottomConstraint: NSLayoutConstraint!
     @IBAction func cancelAction(_ sender: Any) {
         self.showCancelDialog()
     }
+    
     @IBAction func postAction(_ sender: Any) {
         self.createPost()
     }
@@ -56,9 +64,65 @@ class NewPostController: UIViewController {
             action: #selector(self.handleValidatePost),
             for: .editingChanged
         )
+        
+        self.enableKeyboardHideOnTap()
     }
     
-    func getUIImage(asset: PHAsset) -> UIImage? {
+    // 3
+    // Add a gesture on the view controller to close keyboard when tapped
+    private func enableKeyboardHideOnTap(){
+        
+        NotificationCenter.default.addObserver(self, selector: #selector(self.keyboardWillShow), name: UIResponder.keyboardWillShowNotification, object: nil)
+        NotificationCenter.default.addObserver(self, selector: #selector(self.keyboardWillHide), name: UIResponder.keyboardWillHideNotification, object: nil)
+        
+        let tap: UITapGestureRecognizer = UITapGestureRecognizer(target: self, action: #selector(self.hideKeyboard))
+        
+        self.view.addGestureRecognizer(tap)
+    }
+    
+    //3.1
+    @objc func hideKeyboard() {
+        self.view.endEditing(true)
+    }
+    
+    //4.1
+    @objc func keyboardWillShow(notification: NSNotification) {
+        
+        let info = notification.userInfo!
+        
+        let keyboardFrame: CGRect = (info[UIResponder.keyboardFrameEndUserInfoKey] as! NSValue).cgRectValue
+        
+        let duration = notification.userInfo![UIResponder.keyboardAnimationDurationUserInfoKey] as! Double
+        
+        UIView.animate(withDuration: duration) { () -> Void in
+            
+            self.toolbarBottomConstraint.constant =  -(keyboardFrame.size.height + 5)
+            
+            self.view.layoutIfNeeded()
+            
+        }
+        
+    }
+    
+    //4.2
+    @objc func keyboardWillHide(notification: NSNotification) {
+        
+        let duration = notification.userInfo![UIResponder.keyboardAnimationDurationUserInfoKey] as! Double
+        
+        UIView.animate(withDuration: duration) { () -> Void in
+            
+            self.toolbarBottomConstraint.constant = 0
+            self.view.layoutIfNeeded()
+            
+        }
+        
+    }
+    
+    /**
+     * Convert a Photo Asset into a
+     * UIImage
+     */
+    private func getUIImage(asset: PHAsset) -> UIImage? {
         // Convert an asset to a UIImage
         var img: UIImage?
         let manager = PHImageManager.default()
@@ -73,6 +137,10 @@ class NewPostController: UIViewController {
         return img
     }
     
+    /**
+     * Create and show the progress HUD for
+     * uploading in the view
+     */
     func createProgressHud() {
         // Create a HUD showing progress
         // of post upload
@@ -80,8 +148,7 @@ class NewPostController: UIViewController {
         self.hud?.vibrancyEnabled = true
         if arc4random_uniform(2) == 0 {
             self.hud?.indicatorView = JGProgressHUDPieIndicatorView()
-        }
-        else {
+        } else {
             self.hud?.indicatorView = JGProgressHUDRingIndicatorView()
         }
         self.hud?.detailTextLabel.text = "0% Complete"
@@ -112,6 +179,9 @@ class NewPostController: UIViewController {
         self.present(dialog, animated: true, completion: nil)
     }
     
+    /**
+     * Show placeholder text in post content
+     */
     func showContentPlaceholder() {
         // Make placeholder text for content textView
         self.textViewPlaceholder = true
@@ -119,6 +189,10 @@ class NewPostController: UIViewController {
         self.postContent!.textColor = UIColor.lightGray
     }
     
+    /**
+     * Handle updating slideshow when selected photos
+     * are updated
+     */
     func handlePhotosUpdated() {
         // When the selected images are updated
         // we need to handle updating the UI
@@ -164,13 +238,12 @@ class NewPostController: UIViewController {
             self.bottomBar!.items?.append(
                 UIBarButtonItem(
                     title: "Clear photos",
-                    style: .done,
+                    style: .plain,
                     target: nil,
                     action: #selector(self.clearAttachments)
                 )
             )
         }
-        
     }
     
     func openPhotoPicker() {
@@ -207,7 +280,7 @@ class NewPostController: UIViewController {
     
     @objc
     func attachClicked() {
-        // Add photos clicked, so
+        // Add photos clicked, so check if we have a camera
         let discoverySession = AVCaptureDevice.DiscoverySession(
             deviceTypes: [.builtInTrueDepthCamera, .builtInDualCamera, .builtInWideAngleCamera],
             mediaType: .video,
@@ -244,17 +317,6 @@ class NewPostController: UIViewController {
         self.images.removeAll()
         self.handlePhotosUpdated()
     }
-
-    /*
-    // MARK: - Navigation
-
-    // In a storyboard-based application, you will often want to do a little preparation before navigation
-    override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
-        // Get the new view controller using segue.destination.
-        // Pass the selected object to the new view controller.
-    }
-    */
-
 }
 
 // Handle image picker

@@ -19,16 +19,26 @@ protocol PostsDataModelDelegate: class {
     func didFailCreatePost(with error: ApiError)
 }
 
+/**
+ * Model for handling all data related
+ * to posts.
+ *
+ * Makes callbacks to given delegate
+ */
 class PostsDataModel {
     weak var delegate: PostsDataModelDelegate?
     
     let dataContext: NSManagedObjectContext
     
     init() {
+        // Bind our CoreData on initialisation
         let appDelegate = UIApplication.shared.delegate as! AppDelegate
         self.dataContext = appDelegate.persistentContainer.viewContext
     }
     
+    /**
+     * Sort given posts list and notify delegate
+     */
     private func notifyPosts(_ postsList: [Post]) {
         var allPosts = postsList
         
@@ -52,7 +62,12 @@ class PostsDataModel {
         self.delegate?.didRecievePosts(posts: posts, pinnedPosts: pinnedPosts)
     }
     
+    /**
+     * Refresh the posts lists, ommiting first from cache
+     * and then from API once data has been received
+     */
     func refreshPosts(excludingCache: Bool = false) {
+        // Notify cache first, unless excluded
         if !excludingCache {
             let currentPosts = self.loadCache()
             if currentPosts.count > 0 {
@@ -71,7 +86,7 @@ class PostsDataModel {
                 return
             }
             
-            // save the set of posts
+            // save the set of posts and notify
             DispatchQueue.main.async {
                 self.cachePosts(posts: allPosts)
                 self.notifyPosts(allPosts)
@@ -79,6 +94,11 @@ class PostsDataModel {
         }
     }
     
+    /**
+     * Send post creation request to API with given data
+     *
+     * Ommits didCreatePostProgress and didCreatePost
+     */
     func createPost(title: String, content: String, images: [UIImage]) {
         // Create a new post by sending the data to the API.
         // new posts 
@@ -107,6 +127,10 @@ class PostsDataModel {
                 }
             }
         }
+    }
+    
+    func pinPost(id: String, pin: Bool) {
+        
     }
     
     private func loadCache() -> [Post] {

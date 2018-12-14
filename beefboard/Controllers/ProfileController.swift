@@ -9,6 +9,10 @@
 import UIKit
 import AwaitKit
 
+/**
+ * View controller for displaying
+ * a users profile information
+ */
 class ProfileController: UIViewController {
     var isMe: Bool = false
     var details: User?
@@ -17,6 +21,7 @@ class ProfileController: UIViewController {
     
     @IBOutlet weak var nameLabel: UILabel!
     @IBOutlet weak var usernameLabel: UILabel!
+    @IBOutlet weak var emailLabel: UILabel!
     
     @IBOutlet weak var logoutButton: UIBarButtonItem!
     
@@ -40,20 +45,33 @@ class ProfileController: UIViewController {
         
         if let userDetails = self.details {
             nameLabel.text = "\(userDetails.firstName) \(userDetails.lastName)"
-            usernameLabel.text = "\(userDetails.username)"
+            usernameLabel.text = userDetails.username
+            emailLabel.text = userDetails.email
         }
     }
     
     func doLogout() {
         let dialog = UIAlertController(
-            title: "Logout",
-            message: "Are you sure you would like to logout",
+            title: NSLocalizedString("Logout", comment: ""),
+            message: NSLocalizedString("Are you sure you would like to logout", comment: ""),
             preferredStyle: .alert
         )
-        dialog.addAction(UIAlertAction(title: "Yes", style: .destructive, handler: { (action) in
-            self.authSource.logout()
-        }))
-        dialog.addAction(UIAlertAction(title: "Cancel", style: .default, handler: nil))
+        dialog.addAction(
+            UIAlertAction(
+                title: NSLocalizedString("Yes", comment: ""),
+                style: .destructive,
+                handler: { (action) in
+                    self.authSource.logout()
+                }
+            )
+        )
+        dialog.addAction(
+            UIAlertAction(
+                title: NSLocalizedString("Cancel", comment: ""),
+                style: .default,
+                handler: nil
+            )
+        )
         self.present(dialog, animated: false, completion: nil)
     }
 }

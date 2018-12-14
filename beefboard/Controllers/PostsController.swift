@@ -30,9 +30,6 @@ class PostsController: UITableViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         
-        // Set navigation bar as large titles
-        self.navigationController?.navigationBar.prefersLargeTitles = true
-        
         // Allow peek and poping
         self.registerForPreviewing(with: self, sourceView: tableView)
         
@@ -154,7 +151,7 @@ class PostsController: UITableViewController {
         // Set the row hight depending on if the row has images
         if let post = self.getPost(at: indexPath) {
             if post.numImages > 0 {
-                return 280
+                return 310
             }
         }
         
@@ -260,13 +257,23 @@ extension PostsController: PostsDataModelDelegate {
 
 extension PostsController: AuthModelDelegate {
     func showLoginAction() {
-        let loginAction = UIBarButtonItem(title: "Login", style: .plain, target: self, action: #selector(PostsController.openLogin))
+        let loginAction = UIBarButtonItem(
+            title: NSLocalizedString("Login", comment: ""),
+            style: .plain,
+            target: self,
+            action: #selector(PostsController.openLogin)
+        )
         self.navigationBar.leftBarButtonItem = loginAction
         self.navigationBar.rightBarButtonItem = nil
     }
     
     func showProfileAction() {
-        let profileAction = UIBarButtonItem(title: "Profile", style: .plain, target: self, action: #selector(PostsController.openProfile))
+        let profileAction = UIBarButtonItem(
+            title: "Profile",
+            style: .plain,
+            target: self,
+            action: #selector(PostsController.openProfile)
+        )
         self.navigationBar.leftBarButtonItem = profileAction
     }
     

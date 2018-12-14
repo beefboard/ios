@@ -14,9 +14,8 @@ class AppDelegate: UIResponder, UIApplicationDelegate, UISplitViewControllerDele
 
     var window: UIWindow?
 
-
     func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]?) -> Bool {
-        //Theme.defaultTheme()
+        Theme.defaultTheme()
         
         let splitViewController = self.window!.rootViewController as! UISplitViewController
         splitViewController.delegate = self

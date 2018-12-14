@@ -21,6 +21,8 @@ class PostDetailsController: UIViewController {
     // Is this a new post
     var isNew = false
     
+    // Can we delete, approve or pin post
+    let authModel = AuthModel()
     let profilesModel = ProfilesModel()
     
     // Bind to view
@@ -29,29 +31,33 @@ class PostDetailsController: UIViewController {
     @IBOutlet weak var slideshowHeight: NSLayoutConstraint!
     @IBOutlet weak var titleLabel: UILabel!
     @IBOutlet weak var dateLabel: UILabel!
+    
     @IBOutlet weak var contentLabel: UILabel!
+    @IBOutlet weak var contentLabelHeight: NSLayoutConstraint!
+    
     @IBOutlet weak var imageSlideshow: ImageSlideshow!
     
-    @IBOutlet weak var viewPhotosButton: UIBarButtonItem!
-    
-    
-    override func loadView() {
-        super.loadView()
+    override func viewDidLoad() {
+        super.viewDidLoad()
+        //self.navigationItem.largeTitleDisplayMode = .never
         
         self.profilesModel.delegate = self
+        self.authModel.delegate = self
+        
+        // Get our current auth details, to see
+        // if we are able to delete or pin posts
+        self.authModel.retrieveAuth()
         
         // Make a close button if this is a view
         // showing a "new" post
         if self.isNew {
-            super.viewDidLoad()
-            
-            let closeButton = self.generateButton(title: "Close")
+            let closeButton = self.generateButton(title: NSLocalizedString("Close", comment: ""))
             closeButton.addTarget(
                 self,
                 action: #selector(self.closeAction),
                 for: .touchUpInside
             )
-            
+      
             self.navigationItem.leftBarButtonItem = UIBarButtonItem(customView: closeButton)
         }
         
@@ -69,9 +75,8 @@ class PostDetailsController: UIViewController {
     }
     
     private func generateButton(title: String) -> UIButton {
-        let button = UIButton(type: .custom)
+        let button = UIButton()
         button.setTitle(title, for: .normal)
-        button.setTitleColor(button.tintColor, for: .normal)
         return button
     }
     
@@ -82,7 +87,7 @@ class PostDetailsController: UIViewController {
         // Unwrap
         if let postDetails = self.post {
             self.titleLabel.text = postDetails.title
-            self.dateLabel.text = moment(postDetails.date).format("LLLL")
+            self.dateLabel.text = moment(postDetails.date).format("MMMM dd YYYY, hh:mm:ss")
             self.contentLabel.text = postDetails.content
             
             // Use KingFisher and ImageSlideshow
@@ -119,7 +124,9 @@ class PostDetailsController: UIViewController {
             self.navigationItem.rightBarButtonItem = UIBarButtonItem(customView: profileButton)
             
             // Fix scrolling
-            self.resizeView()
+            DispatchQueue.main.async {
+                self.resizeView()
+            }
         }
     }
     
@@ -133,12 +140,11 @@ class PostDetailsController: UIViewController {
         height += self.dateLabel.frame.height + 16
         height += self.contentLabel.frame.height + 16
         
-        
+        self.contentLabelHeight.constant = self.contentLabel.frame.height + 16
         
         let size = CGSize(width: self.contentView.frame.width, height: height)
         self.contentView.frame.size = size
         self.scrollView.contentSize = size
-        print(size.height)
     }
 }
 
@@ -176,5 +182,62 @@ extension PostDetailsController: ProfilesModelDelegate {
     
     func didReceiveProfileDetailsError(error: ApiError) {
         // Handle error
+    }
+}
+
+extension PostDetailsController: AuthModelDelegate {
+    @objc
+    func handleDeleteAction() {
+        
+    }
+    
+    @objc
+    func handlePinAction() {
+        
+    }
+    
+    func didReceiveAuth(auth: User?) {
+        // Show the toolbar only if the current
+        // user is an admin or is the post owner
+        if let authDetails = auth {
+            if let postDetails = self.post {
+                if !authDetails.admin && authDetails.username != postDetails.author {
+                    self.navigationController?.setToolbarHidden(true, animated: false)
+                } else {
+                    self.navigationController?.setToolbarHidden(false, animated: false)
+                }
+                
+                var toolbarItems: [UIBarButtonItem] = []
+                
+                // Allow delete if owner or admin
+                if authDetails.admin || authDetails.username == postDetails.author {
+                    toolbarItems.append(UIBarButtonItem(
+                        barButtonSystemItem: .trash,
+                        target: nil,
+                        action:  #selector(self.handleDeleteAction)
+                    ))
+                }
+                
+                if authDetails.admin {
+                    var pinText = "Pin"
+                    if postDetails.pinned {
+                        pinText = "Unpin"
+                    }
+                    
+                    toolbarItems.append(UIBarButtonItem(
+                        title: pinText,
+                        style: .plain,
+                        target: nil,
+                        action: #selector(self.handlePinAction))
+                    )
+                }
+                
+                self.setToolbarItems(toolbarItems, animated: false)
+            }
+        }
+    }
+    
+    func didReceiveAuthError(error: ApiError) {
+        
     }
 }

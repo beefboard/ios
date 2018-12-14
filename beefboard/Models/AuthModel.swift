@@ -88,8 +88,6 @@ class AuthModel {
                 try await(BeefboardApi.logout())
             } catch {}
             
-            print("Has token: \(BeefboardApi.hasToken())")
-            
             self.currentAuth = nil;
             self.saveAuth()
             

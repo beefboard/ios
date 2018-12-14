@@ -8,11 +8,13 @@
 
 import Foundation
 import Kingfisher
+import SwiftMoment
 
 class PostCell: UITableViewCell {
     @IBOutlet weak var authorLabel: UILabel!
     @IBOutlet weak var contentLabel: UILabel!
     @IBOutlet weak var titleLabel: UILabel!
+    @IBOutlet weak var dateLabel: UILabel!
     
     @IBOutlet weak var mainImage: UIImageView!
     @IBOutlet weak var imageHeight: NSLayoutConstraint!
@@ -20,10 +22,10 @@ class PostCell: UITableViewCell {
     static let identifier = "postCell"
     
     func configureCell(with post: Post) {
-        self.titleLabel?.text = post.title
-        self.contentLabel?.text = post.content
-        self.authorLabel?.text = post.author
-        
+        self.titleLabel.text = post.title
+        self.contentLabel.text = post.content
+        self.authorLabel.text = post.author
+        self.dateLabel.text = moment(post.date).fromNow()
         
         if post.numImages > 0 {
             self.mainImage.contentMode = .scaleAspectFill

@@ -584,4 +584,45 @@ class BeefboardApi {
             )
         }
     }
+    
+    /**
+     * Set the pinned value of a post
+     *
+     * Requires a
+     */
+    public static func setPostPin(id: String, pinned: Bool) -> Promise<Bool> {
+        let request = Alamofire.request(
+            buildUrl(to: "/posts/\(id)"),
+            method: .put,
+            parameters: ["pinned": pinned],
+            encoding: JSONEncoding.default,
+            headers: buildHeaders()
+        )
+        request.session.configuration.timeoutIntervalForRequest = TIMEOUT
+        
+        return Promise{ seal in
+            request
+                .validate()
+                .responseJSON{ response in
+                    switch response.result {
+                    case .success(let json):
+                        guard let json = json as? [String: Any] else {
+                            return seal.reject(ApiError.invalidResponse)
+                        }
+                        guard let token = json["token"] as? String else {
+                            return seal.reject(ApiError.invalidResponse)
+                        }
+                        self.setToken(token: token)
+                        return seal.fulfill(true)
+                    case .failure(let error as AFError):
+                        if let code = error.responseCode {
+                            return seal.reject(self.checkErrorCode(code))
+                        }
+                        return seal.reject(error)
+                    case .failure:
+                        return seal.reject(ApiError.connectionError)
+                    }
+            }
+        }
+    }
 }
