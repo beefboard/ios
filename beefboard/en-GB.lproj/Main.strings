@@ -1,0 +1,129 @@
+
+/* Class = "UINavigationItem"; title = "Login"; ObjectID = "0Ts-0n-wk1"; */
+"0Ts-0n-wk1.title" = "Login";
+
+/* Class = "UIButton"; normalTitle = "Login"; ObjectID = "18M-ue-vhM"; */
+"18M-ue-vhM.normalTitle" = "Login";
+
+/* Class = "UIBarButtonItem"; title = "Login"; ObjectID = "2ot-nf-GCS"; */
+"2ot-nf-GCS.title" = "Login";
+
+/* Class = "UINavigationItem"; title = "BEEFBOARD"; ObjectID = "7LL-z3-taj"; */
+"7LL-z3-taj.title" = "BEEFBOARD";
+
+/* Class = "UIBarButtonItem"; title = "Cancel"; ObjectID = "AlY-jE-HfC"; */
+"AlY-jE-HfC.title" = "Cancel";
+
+/* Class = "UIViewController"; title = "Login"; ObjectID = "BYZ-38-t0r"; */
+"BYZ-38-t0r.title" = "Login";
+
+/* Class = "UIBarButtonItem"; title = "Sign up"; ObjectID = "DH5-TH-zjS"; */
+"DH5-TH-zjS.title" = "Sign up";
+
+/* Class = "UILabel"; text = "Passwords do not match"; ObjectID = "ECX-dB-rIf"; */
+"ECX-dB-rIf.text" = "Passwords do not match";
+
+/* Class = "UILabel"; text = "username"; ObjectID = "K7L-kv-jzg"; */
+"K7L-kv-jzg.text" = "username";
+
+/* Class = "UILabel"; text = "Content"; ObjectID = "Lk1-Lc-fjc"; */
+"Lk1-Lc-fjc.text" = "Content";
+
+/* Class = "UILabel"; text = "Password"; ObjectID = "N3n-MG-fXp"; */
+"N3n-MG-fXp.text" = "Password";
+
+/* Class = "UILabel"; text = "Repeat Password"; ObjectID = "NBV-Fp-Zo8"; */
+"NBV-Fp-Zo8.text" = "Repeat Password";
+
+/* Class = "UILabel"; text = "First name"; ObjectID = "NG4-g5-LjC"; */
+"NG4-g5-LjC.text" = "First name";
+
+/* Class = "UIViewController"; title = "Profile"; ObjectID = "NNh-pb-IIJ"; */
+"NNh-pb-IIJ.title" = "Profile";
+
+/* Class = "UIBarButtonItem"; title = "Register"; ObjectID = "PLl-7G-kOw"; */
+"PLl-7G-kOw.title" = "Register";
+
+/* Class = "UILabel"; text = "Title"; ObjectID = "RFp-gT-ICv"; */
+"RFp-gT-ICv.text" = "Title";
+
+/* Class = "UIBarButtonItem"; title = "Cancel"; ObjectID = "RvM-Hv-uB9"; */
+"RvM-Hv-uB9.title" = "Cancel";
+
+/* Class = "UILabel"; text = "Content"; ObjectID = "Sw7-eg-yVQ"; */
+"Sw7-eg-yVQ.text" = "Content";
+
+/* Class = "UIViewController"; title = "Register"; ObjectID = "a1e-uv-Zed"; */
+"a1e-uv-Zed.title" = "Register";
+
+/* Class = "UILabel"; text = "Username already exists"; ObjectID = "aZg-99-699"; */
+"aZg-99-699.text" = "Username already exists";
+
+/* Class = "UIBarButtonItem"; title = "Cancel"; ObjectID = "b8G-3A-KTc"; */
+"b8G-3A-KTc.title" = "Cancel";
+
+/* Class = "UILabel"; text = "Username"; ObjectID = "c79-d8-aLA"; */
+"c79-d8-aLA.text" = "Username";
+
+/* Class = "UILabel"; text = "Email"; ObjectID = "coB-E3-wwt"; */
+"coB-E3-wwt.text" = "Email";
+
+/* Class = "UILabel"; text = "BEEFBOARD"; ObjectID = "dM4-cM-7kP"; */
+"dM4-cM-7kP.text" = "BEEFBOARD";
+
+/* Class = "UITextField"; placeholder = "Title"; ObjectID = "ghp-rN-gkR"; */
+"ghp-rN-gkR.placeholder" = "Title";
+
+/* Class = "UIBarButtonItem"; title = "Logout"; ObjectID = "hHk-IM-wjK"; */
+"hHk-IM-wjK.title" = "Logout";
+
+/* Class = "UIViewController"; title = "Post"; ObjectID = "hor-Du-EMl"; */
+"hor-Du-EMl.title" = "Post";
+
+/* Class = "UILabel"; text = "Title"; ObjectID = "hyl-Ym-WDD"; */
+"hyl-Ym-WDD.text" = "Title";
+
+/* Class = "UINavigationItem"; title = "New"; ObjectID = "iQL-8b-Hbf"; */
+"iQL-8b-Hbf.title" = "New";
+
+/* Class = "UILabel"; text = "Author"; ObjectID = "j67-ih-SKu"; */
+"j67-ih-SKu.text" = "Author";
+
+/* Class = "UIBarButtonItem"; title = "Post"; ObjectID = "jZv-aI-DWy"; */
+"jZv-aI-DWy.title" = "Post";
+
+/* Class = "UILabel"; text = "Last name"; ObjectID = "lHl-eJ-oBP"; */
+"lHl-eJ-oBP.text" = "Last name";
+
+/* Class = "UINavigationItem"; title = "Post"; ObjectID = "liS-ER-RBM"; */
+"liS-ER-RBM.title" = "Post";
+
+/* Class = "UILabel"; text = "Email is not valid"; ObjectID = "lva-0s-mRC"; */
+"lva-0s-mRC.text" = "Email is not valid";
+
+/* Class = "UIBarButtonItem"; title = "Done"; ObjectID = "mL2-dX-56h"; */
+"mL2-dX-56h.title" = "Done";
+
+/* Class = "UINavigationItem"; title = "Register"; ObjectID = "oJc-a9-HbT"; */
+"oJc-a9-HbT.title" = "Register";
+
+/* Class = "UILabel"; text = "name"; ObjectID = "q8w-2n-ru3"; */
+"q8w-2n-ru3.text" = "name";
+
+/* Class = "UILabel"; text = "Date"; ObjectID = "qUA-9W-cDP"; */
+"qUA-9W-cDP.text" = "Date";
+
+/* Class = "UIViewController"; title = "New post"; ObjectID = "rxF-I5-DwU"; */
+"rxF-I5-DwU.title" = "New post";
+
+/* Class = "UITextView"; text = "Type something here..."; ObjectID = "xbt-B4-wAm"; */
+"xbt-B4-wAm.text" = "Type something here...";
+
+/* Class = "UITextField"; placeholder = "Password"; ObjectID = "xht-ZI-QDv"; */
+"xht-ZI-QDv.placeholder" = "Password";
+
+/* Class = "UITextField"; placeholder = "Username"; ObjectID = "yHO-lY-oMO"; */
+"yHO-lY-oMO.placeholder" = "Username";
+
+/* Class = "UINavigationItem"; title = "Profile"; ObjectID = "yw0-6n-Ady"; */
+"yw0-6n-Ady.title" = "Profile";

@@ -73,9 +73,9 @@ class LoginController: UIViewController {
 
 extension LoginController: AuthModelDelegate {
     func showFailedAlert(message: String) {
-        let alert = UIAlertController(title: "Login failed", message: message, preferredStyle: .alert)
+        let alert = UIAlertController(title: NSLocalizedString("Login failed", comment: ""), message: message, preferredStyle: .alert)
         
-        alert.addAction(UIAlertAction(title: "Ok", style: .default, handler: nil))
+        alert.addAction(UIAlertAction(title: NSLocalizedString("Ok", comment: ""), style: .default, handler: nil))
         self.present(alert, animated: true)
     }
     

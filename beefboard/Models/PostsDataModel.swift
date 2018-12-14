@@ -12,19 +12,39 @@ import CoreData
 
 protocol PostsDataModelDelegate: class {
     func didRecievePosts(posts: [Post], pinnedPosts: [Post])
-    func didFailReceiveWithError(error: ApiError)
+    func didFailReceive(with error: ApiError)
+    
+    func didCreatePost(post: Post)
+    func didCreatePostProgress(progress: Double)
+    func didFailCreatePost(with error: ApiError)
+    
+    func didPinPost(pinned: Bool)
+    func didFailPinPost(with error: ApiError)
+    
+    func didDeletePost()
+    func didFailDeletePost(with error: ApiError)
 }
 
+/**
+ * Model for handling all data related
+ * to posts.
+ *
+ * Makes callbacks to given delegate
+ */
 class PostsDataModel {
     weak var delegate: PostsDataModelDelegate?
     
     let dataContext: NSManagedObjectContext
     
     init() {
+        // Bind our CoreData on initialisation
         let appDelegate = UIApplication.shared.delegate as! AppDelegate
         self.dataContext = appDelegate.persistentContainer.viewContext
     }
     
+    /**
+     * Sort given posts list and notify delegate
+     */
     private func notifyPosts(_ postsList: [Post]) {
         var allPosts = postsList
         
@@ -48,7 +68,12 @@ class PostsDataModel {
         self.delegate?.didRecievePosts(posts: posts, pinnedPosts: pinnedPosts)
     }
     
+    /**
+     * Refresh the posts lists, ommiting first from cache
+     * and then from API once data has been received
+     */
     func refreshPosts(excludingCache: Bool = false) {
+        // Notify cache first, unless excluded
         if !excludingCache {
             let currentPosts = self.loadCache()
             if currentPosts.count > 0 {
@@ -62,12 +87,12 @@ class PostsDataModel {
                 allPosts = try await(BeefboardApi.getPosts())
             } catch let error as ApiError {
                 DispatchQueue.main.async {
-                    self.delegate?.didFailReceiveWithError(error: error)
+                    self.delegate?.didFailReceive(with: error)
                 }
                 return
             }
             
-            // save the set of posts
+            // save the set of posts and notify
             DispatchQueue.main.async {
                 self.cachePosts(posts: allPosts)
                 self.notifyPosts(allPosts)
@@ -75,6 +100,90 @@ class PostsDataModel {
         }
     }
     
+    /**
+     * Send post creation request to API with given data
+     *
+     * Ommits didCreatePostProgress and didCreatePost
+     */
+    func createPost(title: String, content: String, images: [UIImage]) {
+        // Create a new post by sending the data to the API.
+        // new posts 
+        async {
+            do {
+                let id = try await(
+                    BeefboardApi.newPost(
+                        title: title,
+                        content: content,
+                        images: images,
+                        progressHandler: { (progress) in
+                            DispatchQueue.main.async {
+                                self.delegate?.didCreatePostProgress(progress: progress)
+                            }
+                        }
+                    )
+                )
+                let post = try await(BeefboardApi.getPost(id: id))
+                DispatchQueue.main.async {
+                    self.delegate?.didCreatePost(post: post)
+                }
+                
+            } catch let error as ApiError {
+                DispatchQueue.main.async {
+                    self.delegate?.didFailCreatePost(with: error)
+                }
+            }
+        }
+    }
+    
+    /**
+     * Set the pinned attribute of a post to the given pinned
+     * values
+     *
+     * Ommits didPinPost when successful, and didFailPinPost when
+     * unsuccessful
+     */
+    func setPostPinned(id: String, pinned: Bool) {
+        async {
+            do {
+                try await(
+                    BeefboardApi.setPostPin(id: id, pinned: pinned)
+                )
+                DispatchQueue.main.async {
+                    self.delegate?.didPinPost(pinned: pinned)
+                }
+            } catch let error as ApiError {
+                DispatchQueue.main.async {
+                    self.delegate?.didFailPinPost(with: error)
+                }
+            }
+        }
+    }
+    
+    /**
+     * Attempt to delete the given post
+     *
+     * Ommits didDeletePost and didFailDeletePost when unsuccessful
+     */
+    func deletePost(id: String) {
+        async {
+            do {
+                try await(
+                    BeefboardApi.deletePost(id: id)
+                )
+                DispatchQueue.main.async {
+                    self.delegate?.didDeletePost()
+                }
+            } catch let error as ApiError {
+                DispatchQueue.main.async {
+                    self.delegate?.didFailDeletePost(with: error)
+                }
+            }
+        }
+    }
+    
+    /**
+     * Load posts data from CoreData
+     */
     private func loadCache() -> [Post] {
         let request = NSFetchRequest<NSFetchRequestResult>(entityName: "PostsData")
         request.returnsObjectsAsFaults = false
@@ -104,15 +213,14 @@ class PostsDataModel {
                 }
             }
             
-        } catch {
-            print("Failed")
-        }
-        
-        print("Loaded \(posts.count) posts from cache")
+        } catch {}
         
         return posts
     }
     
+    /**
+     * Put the given posts into CoreData
+     */
     private func cachePosts(posts: [Post]) {
         // Remove old cache
         let fetch = NSFetchRequest<NSFetchRequestResult>(entityName: "PostsData")
@@ -122,6 +230,8 @@ class PostsDataModel {
         let entity = NSEntityDescription.entity(forEntityName: "PostsData", in: self.dataContext)
         
         for post in posts {
+            // Convert posts to their core data
+            // values
             let postEntry = NSManagedObject(entity: entity!, insertInto: self.dataContext) as! PostsData
             postEntry.id = UUID(uuidString: post.id)
             postEntry.title = post.title
