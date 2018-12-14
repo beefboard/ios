@@ -231,6 +231,7 @@ extension RegistrationController: AuthModelDelegate {
 
 extension RegistrationController: ProfilesModelDelegate {
     func didReceiveProfileDetails(user: User?) {
+        print("Received user details")
         self.usernameTaken = user != nil
         self.updateForm()
     }

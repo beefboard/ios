@@ -32,7 +32,7 @@ struct Theme {
     static private func updateDisplay() {
         let proxyButton = UIButton.appearance()
         proxyButton.setTitleColor(Theme.buttonTextColor, for: .normal)
-        proxyButton.tintColor = Theme.buttonTextColor
+        //proxyButton.tintColor = Theme.buttonTextColor
         
         //proxyButton.backgroundColor = Theme.buttonBackgroundColor
         

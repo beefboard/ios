@@ -16,7 +16,7 @@ import AwaitKit
 class PostsController: UITableViewController {
     @IBOutlet weak var navigationBar: UINavigationItem!
     
-    private var postsDataSource = PostsDataModel()
+    var postsDataSource = PostsDataModel()
     private var authSource = AuthModel()
     
     private var auth: User?
@@ -38,6 +38,7 @@ class PostsController: UITableViewController {
         
         self.refreshControl?.addTarget(self, action: #selector(PostsController.refreshPosts(refreshControl:)), for: UIControl.Event.valueChanged)
         
+        // Show an activity icon
         self.activityIndicator = UIActivityIndicatorView(style: .whiteLarge)
         self.activityIndicator.color = UIColor.darkGray
         self.activityIndicator.center = self.tableView.center
@@ -46,15 +47,14 @@ class PostsController: UITableViewController {
         self.navigationController?.view.addSubview(activityIndicator)
         
         self.showBarItemsBusy()
-        self.postsDataSource.refreshPosts()
-        
     }
     
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
         // When the posts screen is shown, retrieve our
-        // current auth info
+        // current auth info and new posts
         self.authSource.retrieveAuth()
+        self.postsDataSource.refreshPosts()
     }
     
     /**
@@ -222,6 +222,11 @@ extension PostsController: UIViewControllerPreviewingDelegate {
 
 // Handle all received posts data
 extension PostsController: PostsDataModelDelegate {
+    func didDeletePost() {}
+    func didFailDeletePost(with error: ApiError) {}
+    func didPinPost(pinned: Bool) {}
+    func didFailPinPost(with error: ApiError) {}
+    
     
     func stopLoadingIcons() {
         self.activityIndicator.stopAnimating()

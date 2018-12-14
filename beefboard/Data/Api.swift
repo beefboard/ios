@@ -37,7 +37,7 @@ struct Post: Decodable {
     let date: Date
     let numImages: Int
     let approved: Bool
-    let pinned: Bool
+    var pinned: Bool
     let votes: PostVotes
     
     public init(
@@ -260,7 +260,8 @@ class BeefboardApi {
     }
     
     /**
-     * Get the given user details
+     * Get the given user details. Nil returned when
+     * user does not exist
      */
     public static func getUser(username: String) -> Promise<User?> {        
         let request = Alamofire.request(
@@ -276,16 +277,19 @@ class BeefboardApi {
                 .responseData{ response in
                     switch response.result {
                     case .success(let data):
-                        var auth: User? = nil
+                        var user: User? = nil
                         do {
-                            auth = try JSONDecoder().decode(User.self, from: data)
+                            user = try JSONDecoder().decode(User.self, from: data)
                         } catch (_) {
                             return seal.reject(ApiError.invalidResponse)
                         }
                         
-                        return seal.fulfill(auth!)
+                        return seal.fulfill(user!)
                     case .failure(let error as AFError):
                         if let code = error.responseCode {
+                            if code == 404 {
+                                return seal.fulfill(nil)
+                            }
                             return seal.reject(self.checkErrorCode(code))
                         }
                         return seal.reject(error)
@@ -525,7 +529,6 @@ class BeefboardApi {
         images: [UIImage],
         progressHandler: @escaping (Double) -> ()
     ) -> Promise<String> {
-        
         var headers = self.buildHeaders()
         headers["Content-type"] = "multipart/form-data"
         
@@ -592,7 +595,7 @@ class BeefboardApi {
      */
     public static func setPostPin(id: String, pinned: Bool) -> Promise<Bool> {
         let request = Alamofire.request(
-            buildUrl(to: "/posts/\(id)"),
+            buildUrl(to: "/posts/\(id)/pinned"),
             method: .put,
             parameters: ["pinned": pinned],
             encoding: JSONEncoding.default,
@@ -609,11 +612,49 @@ class BeefboardApi {
                         guard let json = json as? [String: Any] else {
                             return seal.reject(ApiError.invalidResponse)
                         }
-                        guard let token = json["token"] as? String else {
+                        guard let success = json["success"] as? Bool else {
                             return seal.reject(ApiError.invalidResponse)
                         }
-                        self.setToken(token: token)
-                        return seal.fulfill(true)
+                        return seal.fulfill(success)
+                    case .failure(let error as AFError):
+                        if let code = error.responseCode {
+                            return seal.reject(self.checkErrorCode(code))
+                        }
+                        return seal.reject(error)
+                    case .failure:
+                        return seal.reject(ApiError.connectionError)
+                    }
+            }
+        }
+    }
+    
+    /**
+     * Delete a post
+     *
+     * Requires login
+     */
+    public static func deletePost(id: String) -> Promise<Bool> {
+        let request = Alamofire.request(
+            buildUrl(to: "/posts/\(id)"),
+            method: .delete,
+            encoding: JSONEncoding.default,
+            headers: buildHeaders()
+        )
+        request.session.configuration.timeoutIntervalForRequest = TIMEOUT
+        
+        return Promise{ seal in
+            request
+                .validate()
+                .responseJSON{ response in
+                    switch response.result {
+                    case .success(let json):
+                        guard let json = json as? [String: Any] else {
+                            return seal.reject(ApiError.invalidResponse)
+                        }
+                        guard let success = json["success"] as? Bool else {
+                            return seal.reject(ApiError.invalidResponse)
+                        }
+                        return seal.fulfill(success)
                     case .failure(let error as AFError):
                         if let code = error.responseCode {
                             return seal.reject(self.checkErrorCode(code))

@@ -68,7 +68,6 @@ class NewPostController: UIViewController {
         self.enableKeyboardHideOnTap()
     }
     
-    // 3
     // Add a gesture on the view controller to close keyboard when tapped
     private func enableKeyboardHideOnTap(){
         
@@ -80,14 +79,11 @@ class NewPostController: UIViewController {
         self.view.addGestureRecognizer(tap)
     }
     
-    //3.1
     @objc func hideKeyboard() {
         self.view.endEditing(true)
     }
     
-    //4.1
     @objc func keyboardWillShow(notification: NSNotification) {
-        
         let info = notification.userInfo!
         
         let keyboardFrame: CGRect = (info[UIResponder.keyboardFrameEndUserInfoKey] as! NSValue).cgRectValue
@@ -104,9 +100,7 @@ class NewPostController: UIViewController {
         
     }
     
-    //4.2
     @objc func keyboardWillHide(notification: NSNotification) {
-        
         let duration = notification.userInfo![UIResponder.keyboardAnimationDurationUserInfoKey] as! Double
         
         UIView.animate(withDuration: duration) { () -> Void in
@@ -142,15 +136,9 @@ class NewPostController: UIViewController {
      * uploading in the view
      */
     func createProgressHud() {
-        // Create a HUD showing progress
-        // of post upload
-        self.hud = JGProgressHUD(style: .light)
+        self.hud = JGProgressHUD(style: .dark)
         self.hud?.vibrancyEnabled = true
-        if arc4random_uniform(2) == 0 {
-            self.hud?.indicatorView = JGProgressHUDPieIndicatorView()
-        } else {
-            self.hud?.indicatorView = JGProgressHUDRingIndicatorView()
-        }
+        self.hud?.indicatorView = JGProgressHUDPieIndicatorView()
         self.hud?.detailTextLabel.text = "0% Complete"
         self.hud?.textLabel.text = "Uploading"
         self.hud?.show(in: self.view)
@@ -327,6 +315,7 @@ extension NewPostController: UIImagePickerControllerDelegate, UINavigationContro
         self.dismiss(animated: true, completion: nil)
         let newImage = info[UIImagePickerController.InfoKey.originalImage] as! UIImage
         self.images.append(newImage)
+        self.handlePhotosUpdated()
     }
 }
 
@@ -334,6 +323,12 @@ extension NewPostController: UIImagePickerControllerDelegate, UINavigationContro
  Handle all PostDataModel callbacks
  **/
 extension NewPostController: PostsDataModelDelegate {
+    func didDeletePost() {}
+    func didFailDeletePost(with error: ApiError) {}
+
+    func didPinPost(pinned: Bool) {}
+    func didFailPinPost(with error: ApiError) {}
+    
     func didRecievePosts(posts: [Post], pinnedPosts: [Post]) {}
     func didFailReceive(with error: ApiError) {}
     
@@ -360,8 +355,8 @@ extension NewPostController: PostsDataModelDelegate {
     
     // When we receive progress, update HUD
     func didCreatePostProgress(progress: Double) {
-        self.hud?.progress = Float(progress * 100)
-        self.hud?.detailTextLabel.text = "\(progress)% Complete"
+        self.hud?.progress = Float(progress)
+        self.hud?.detailTextLabel.text = "\((progress * 100).rounded())% Complete"
     }
     
     func didFailCreatePost(with error: ApiError) {

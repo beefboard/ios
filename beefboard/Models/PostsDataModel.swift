@@ -17,6 +17,12 @@ protocol PostsDataModelDelegate: class {
     func didCreatePost(post: Post)
     func didCreatePostProgress(progress: Double)
     func didFailCreatePost(with error: ApiError)
+    
+    func didPinPost(pinned: Bool)
+    func didFailPinPost(with error: ApiError)
+    
+    func didDeletePost()
+    func didFailDeletePost(with error: ApiError)
 }
 
 /**
@@ -129,10 +135,55 @@ class PostsDataModel {
         }
     }
     
-    func pinPost(id: String, pin: Bool) {
-        
+    /**
+     * Set the pinned attribute of a post to the given pinned
+     * values
+     *
+     * Ommits didPinPost when successful, and didFailPinPost when
+     * unsuccessful
+     */
+    func setPostPinned(id: String, pinned: Bool) {
+        async {
+            do {
+                try await(
+                    BeefboardApi.setPostPin(id: id, pinned: pinned)
+                )
+                DispatchQueue.main.async {
+                    self.delegate?.didPinPost(pinned: pinned)
+                }
+            } catch let error as ApiError {
+                DispatchQueue.main.async {
+                    self.delegate?.didFailPinPost(with: error)
+                }
+            }
+        }
     }
     
+    /**
+     * Attempt to delete the given post
+     *
+     * Ommits didDeletePost and didFailDeletePost when unsuccessful
+     */
+    func deletePost(id: String) {
+        async {
+            do {
+                try await(
+                    BeefboardApi.deletePost(id: id)
+                )
+                DispatchQueue.main.async {
+                    self.delegate?.didDeletePost()
+                }
+            } catch let error as ApiError {
+                DispatchQueue.main.async {
+                    self.delegate?.didFailDeletePost(with: error)
+                }
+            }
+        }
+    }
+    
+    /**
+     * Load posts data from CoreData
+     */
     private func loadCache() -> [Post] {
         let request = NSFetchRequest<NSFetchRequestResult>(entityName: "PostsData")
         request.returnsObjectsAsFaults = false
@@ -162,15 +213,14 @@ class PostsDataModel {
                 }
             }
             
-        } catch {
-            print("Failed")
-        }
-        
-        print("Loaded \(posts.count) posts from cache")
+        } catch {}
         
         return posts
     }
     
+    /**
+     * Put the given posts into CoreData
+     */
     private func cachePosts(posts: [Post]) {
         // Remove old cache
         let fetch = NSFetchRequest<NSFetchRequestResult>(entityName: "PostsData")
@@ -180,6 +230,8 @@ class PostsDataModel {
         let entity = NSEntityDescription.entity(forEntityName: "PostsData", in: self.dataContext)
         
         for post in posts {
+            // Convert posts to their core data
+            // values
             let postEntry = NSManagedObject(entity: entity!, insertInto: self.dataContext) as! PostsData
             postEntry.id = UUID(uuidString: post.id)
             postEntry.title = post.title
