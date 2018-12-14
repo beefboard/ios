@@ -10,7 +10,6 @@ import UIKit
 import ImageSlideshow
 import AVFoundation
 import Photos
-import OpalImagePicker
 import BSImagePicker
 import JGProgressHUD
 
@@ -259,7 +258,7 @@ class NewPostController: UIViewController {
 }
 
 // Handle image picker
-extension NewPostController: OpalImagePickerControllerDelegate, UIImagePickerControllerDelegate, UINavigationControllerDelegate
+extension NewPostController: UIImagePickerControllerDelegate, UINavigationControllerDelegate
 {
     func imagePickerController(_ picker: UIImagePickerController,
                                didFinishPickingMediaWithInfo info: [UIImagePickerController.InfoKey : Any]) {

@@ -15,7 +15,10 @@ protocol AuthModelDelegate: class {
     func didReceiveAuthError(error: ApiError)
 }
 
-
+/**
+ * AuthModel, handling auth for all views which
+ * require anything to do with credentials or login
+ */
 class AuthModel {
     weak var delegate: AuthModelDelegate?
     
@@ -26,14 +29,21 @@ class AuthModel {
         self.loadCurrentAuth()
     }
     
-    @discardableResult
-    func retrieveAuth() -> Promise<Void> {
+    /**
+     * Attempt to retrieve our current auth access.
+     *
+     * A local cached auth will first be broadcast if
+     * it exists, where we then try to refresh those
+     * details.
+     *
+     * Broadcasts didReceiveAuth when auth is retrieved
+     */
+    func retrieveAuth()  {
         if self.currentAuth != nil {
             self.delegate?.didReceiveAuth(auth: self.currentAuth)
         }
         
-        return async {
-            print("Retrieiving auth")
+        async {
             do {
                 self.currentAuth = try await(BeefboardApi.getAuth())
             } catch (ApiError.invalidCredentials) {
@@ -48,11 +58,17 @@ class AuthModel {
         }
     }
     
+    /**
+     * Attempt to login with credentials. Will store
+     * Auth on success and broadcast didReceiveAuth
+     *
+     * Will broadcast failure, when login fails
+     */
     func login(username: String, password: String) {
         async {
             do {
                 try await(BeefboardApi.login(username: username, password: password))
-                try await(self.retrieveAuth())
+                self.retrieveAuth()
             } catch let error as ApiError {
                 DispatchQueue.main.async {
                     self.delegate?.didReceiveAuthError(error: error)
@@ -61,6 +77,11 @@ class AuthModel {
         }
     }
     
+    /**
+     * Attempt logout, and remove cached auth details
+     *
+     * Broadcasts null from didReceiveAuth when finished
+     */
     func logout() {
         async {
             do {
@@ -78,27 +99,29 @@ class AuthModel {
         }
     }
     
+    // MARK: - Cache management
+    
     private func loadCurrentAuth() {
-        print("Loading auth")
+        // Attempt to load auth details from Userdefaults
+        // and decode
         if let userAuthJsonString = UserDefaults.standard.string(forKey: AuthModel.USER_AUTH_KEY) {
             if let userAuthJson = userAuthJsonString.data(using: String.Encoding.utf8, allowLossyConversion: false) {
-                print("Got auth")
                 self.currentAuth = try? JSONDecoder().decode(User.self, from: userAuthJson)
             }
         } else {
-            print("Got null")
             self.currentAuth = nil
         }
     }
     
     private func saveAuth() {
+        // Attempt to save our current auth details to
+        // Userdefaults
         if let auth = self.currentAuth {
             if let jsonData = try? JSONEncoder().encode(auth) {
                 let jsonString = String(decoding: jsonData, as: UTF8.self)
                 UserDefaults.standard.setValue(jsonString, forKey: AuthModel.USER_AUTH_KEY)
             }
         } else {
-            print("Saving auth as nothing")
             UserDefaults.standard.setValue(nil, forKey: AuthModel.USER_AUTH_KEY)
         }
     }

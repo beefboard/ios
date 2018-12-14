@@ -11,13 +11,17 @@ import AwaitKit
 
 protocol RegistrationModelDelegate: class {
     func didRegister(username: String, password: String)
-    func didReceiveUsernameInfo(taken: Bool)
     func didReceiveEmailValid(valid: Bool)
     func didReceivePasswordsValid(valid: Bool)
     func didRecieveRegistrationError(error: ApiError)
 }
 
+/**
+ * Registration handling for all views which require
+ * account registration methods
+ */
 class RegistrationModel {
+    // Matcher for valid emails
     private static let EMAIL_TEST = NSPredicate(
         format:"SELF MATCHES %@",
         "[A-Z0-9a-z._%+-]+@[A-Za-z0-9.-]+\\.[A-Za-z]{2,64}"
@@ -25,33 +29,37 @@ class RegistrationModel {
     
     weak var delegate: RegistrationModelDelegate?
     
-    func checkUsername(username: String) {
-        async {
-            var details: User? = nil
-            do {
-                details = try await(BeefboardApi.getUser(username: username))
-            } catch let e as ApiError {
-                print(e)
-            }
-            
-            DispatchQueue.main.async {
-                self.delegate?.didReceiveUsernameInfo(taken: details != nil)
-            }
-        }
-    }
-    
+    /**
+     * Check the given email address for validness.
+     *
+     * Broadcasts didReceiveEmailValid when check has
+     * finished
+     */
     func checkEmail(email: String) {
         DispatchQueue.main.async {
+            // Use the REGEX to check for validitiy
             self.delegate?.didReceiveEmailValid(valid: RegistrationModel.EMAIL_TEST.evaluate(with: email))
         }
     }
     
+    /**
+     * Check to see if the given passwords match
+     *
+     * Broadcasts didReceivePasswordsValid when successful
+     */
     func checkPasswords(password: String, password2: String) {
         DispatchQueue.main.async {
             self.delegate?.didReceivePasswordsValid(valid: password == password2)
         }
     }
     
+    /**
+     * Attempt registration with the given details
+     *
+     * Broadcasts didRegister with username and password
+     * upon success and didRecieveRegistrationError on
+     * Registration failure
+     */
     func register(
         username: String,
         password: String,
@@ -61,6 +69,7 @@ class RegistrationModel {
     ) {
         async {
             do {
+                // Try to register
                 try await(
                     BeefboardApi.register(
                         username: username,
@@ -71,6 +80,7 @@ class RegistrationModel {
                     )
                 )
             } catch (let error as ApiError) {
+                // Catch and broadcast errors
                 DispatchQueue.main.async {
                     self.delegate?.didRecieveRegistrationError(error: error)
                 }

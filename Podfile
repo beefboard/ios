@@ -10,7 +10,7 @@ target 'beefboard' do
     pod 'Kingfisher', '~> 4.0'
     pod 'AwaitKit', '~> 5.0.1'
     pod 'JGProgressHUD'
-    pod 'OpalImagePicker'
     pod 'BSImagePicker', '~> 2.8'
+    pod 'SwiftMoment'
 end
 

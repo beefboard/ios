@@ -15,7 +15,6 @@ PODS:
     - Kingfisher (> 3.0)
   - JGProgressHUD (2.0.3)
   - Kingfisher (4.10.0)
-  - OpalImagePicker (2.0.0)
   - PromiseKit (6.5.2):
     - PromiseKit/CorePromise (= 6.5.2)
     - PromiseKit/Foundation (= 6.5.2)
@@ -25,6 +24,7 @@ PODS:
     - PromiseKit/CorePromise
   - PromiseKit/UIKit (6.5.2):
     - PromiseKit/CorePromise
+  - SwiftMoment (0.7)
 
 DEPENDENCIES:
   - Alamofire (~> 4.7)
@@ -34,7 +34,7 @@ DEPENDENCIES:
   - ImageSlideshow/Kingfisher
   - JGProgressHUD
   - Kingfisher (~> 4.0)
-  - OpalImagePicker
+  - SwiftMoment
 
 SPEC REPOS:
   https://github.com/cocoapods/specs.git:
@@ -46,8 +46,8 @@ SPEC REPOS:
     - ImageSlideshow
     - JGProgressHUD
     - Kingfisher
-    - OpalImagePicker
     - PromiseKit
+    - SwiftMoment
 
 SPEC CHECKSUMS:
   Alamofire: c7287b6e5d7da964a70935e5db17046b7fde6568
@@ -58,9 +58,9 @@ SPEC CHECKSUMS:
   ImageSlideshow: f8eec5e37a980f60923b585ff23b0e140fd24018
   JGProgressHUD: 12b20a8f4ffe05258f8635c1ab92816e451f904d
   Kingfisher: 43c4b802d8b5256cf1f4379e9cd10b329be6d3e2
-  OpalImagePicker: efc91612ef5b3849314801f68fddc26200da9435
   PromiseKit: 27c1601bfb73405871b805bcb8cf7e55c4dad3db
+  SwiftMoment: dc6dd27012e267819104cbb03f74ff9192dd0b42
 
-PODFILE CHECKSUM: 591cfb2c22aa3119059484dadb4037ce28e236d3
+PODFILE CHECKSUM: 91876a5ddb6d0aa06f15bc2a9b68a830907c4323
 
 COCOAPODS: 1.5.3

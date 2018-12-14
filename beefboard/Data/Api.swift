@@ -11,6 +11,10 @@ import AwaitKit
 import PromiseKit
 import Alamofire
 
+/**
+ * Object representing the current
+ * votes on a post
+ */
 struct PostVotes: Decodable {
     let grade: Int
     let user: Int?
@@ -21,6 +25,10 @@ struct PostVotes: Decodable {
     }
 }
 
+/**
+ * Object representing a Post
+ * with details stored in server
+ */
 struct Post: Decodable {
     let id: String
     let title: String
@@ -55,10 +63,17 @@ struct Post: Decodable {
     }
 }
 
-struct PostsList: Decodable {
+/**
+ * Representation of JSON structure
+ * containing posts. Used for decoding
+ */
+private struct PostsList: Decodable {
     let posts: [Post]
 }
 
+/**
+ * Object containing profile details
+ */
 struct User: Codable {
     let username: String
     let firstName: String
@@ -67,6 +82,10 @@ struct User: Codable {
     let email: String
 }
 
+/**
+ * Categories of API ommited
+ * by API
+ */
 enum ApiError: Error {
     case unknownError
     case connectionError
@@ -84,6 +103,10 @@ enum DateError: String, Error {
     case invalidDate
 }
 
+/**
+ * Extend formatter to allow for Javascript ISO8601
+ * strings to be decodeded
+ */
 extension Formatter {
     static let iso8601: ISO8601DateFormatter = {
         let formatter = ISO8601DateFormatter()
@@ -92,6 +115,12 @@ extension Formatter {
     }()
 }
 
+/**
+ * Public interface to the beefboard API.
+ *
+ * Stores access token and handles automatic access token
+ * injection to all requests
+ */
 class BeefboardApi {
     private static let TOKEN_KEY = "token"
     private static let TOKEN_HEADER = "x-access-token"
@@ -99,6 +128,8 @@ class BeefboardApi {
     //private static let BEEFBOARD_API_HOST = "http://localhost:2832/v1"
     
     private static let TIMEOUT = 3.0
+    
+    // MARK: - Token storage handling
     
     private static func getToken() -> String? {
         return UserDefaults.standard.string(forKey: BeefboardApi.TOKEN_KEY)
@@ -116,17 +147,22 @@ class BeefboardApi {
         UserDefaults.standard.set(nil, forKey: BeefboardApi.TOKEN_KEY)
     }
     
+    // MARK: - Request builders
+    
     private static func buildUrl(to path: String) -> String {
         return BeefboardApi.BEEFBOARD_API_HOST + path
     }
     
     private static func buildHeaders() -> HTTPHeaders {
+        // Add a token to the headers only if we have a token
         if let token = getToken() {
             return [BeefboardApi.TOKEN_HEADER: token]
         }
         
         return [:]
     }
+    
+    // MARK: - Error handlers
     
     private static func checkErrorCode(_ errorCode: Int) -> ApiError {
         switch errorCode {
@@ -141,10 +177,21 @@ class BeefboardApi {
         }
     }
     
+    // MARK: - API
+    
+    /**
+     * Build the static image url for the
+     * given image parameters
+     */
     public static func getImageUrl(forPost postId: String, forImage imageId: Int) -> String {
         return "\(BeefboardApi.BEEFBOARD_API_HOST)/posts/\(postId)/images/\(imageId)"
     }
     
+    /**
+     * Login to the API with the given creds.
+     *
+     * Success will store the token automatically
+     */
     public static func login(username: String, password: String) -> Promise<Bool> {
         self.clearToken()
         let request = Alamofire.request(
@@ -182,6 +229,11 @@ class BeefboardApi {
         }
     }
     
+    /**
+     * Logout of the API and remove our token.
+     *
+     * Always successful
+     */
     public static func logout() -> Promise<Void> {
         if !self.hasToken() {
             return Promise{ seal in
@@ -207,6 +259,9 @@ class BeefboardApi {
         }
     }
     
+    /**
+     * Get the given user details
+     */
     public static func getUser(username: String) -> Promise<User?> {        
         let request = Alamofire.request(
             buildUrl(to: "/accounts/" + username),
@@ -224,8 +279,7 @@ class BeefboardApi {
                         var auth: User? = nil
                         do {
                             auth = try JSONDecoder().decode(User.self, from: data)
-                        } catch (let e) {
-                            print(e)
+                        } catch (_) {
                             return seal.reject(ApiError.invalidResponse)
                         }
                         
@@ -242,6 +296,9 @@ class BeefboardApi {
         }
     }
     
+    /**
+     * Get our current auth access rights. Requires login
+     */
     public static func getAuth() -> Promise<User?> {
         if !self.hasToken() {
             return Promise{ seal in
@@ -283,6 +340,9 @@ class BeefboardApi {
         }
     }
     
+    /**
+     * Get a list of posts for the homepage
+     */
     public static func getPosts() -> Promise<[Post]> {
         let request = Alamofire.request(
             buildUrl(to: "/posts"),
@@ -291,6 +351,7 @@ class BeefboardApi {
         )
         request.session.configuration.timeoutIntervalForRequest = TIMEOUT
         
+        // Create a decoder to decode the datetime stamps
         let decoder = JSONDecoder()
         decoder.dateDecodingStrategy = .custom({ (decoder) -> Date in
             let container = try decoder.singleValueContainer()
@@ -339,6 +400,12 @@ class BeefboardApi {
         }
     }
     
+    /**
+     * Get data about the given post ID.
+     *
+     * If logged in, this will allow admins to see all posts,
+     * and authors to see their unapproved posts
+     */
     public static func getPost(id: String) -> Promise<Post> {
         let request = Alamofire.request(
             buildUrl(to: "/posts/\(id)"),
@@ -393,6 +460,10 @@ class BeefboardApi {
         }
     }
     
+    /**
+     * Make a registration request to
+     * the API with the given details
+     */
     public static func register(
         username: String,
         password: String,
@@ -443,15 +514,24 @@ class BeefboardApi {
         }
     }
     
+    /**
+     * Make a new post request to the API
+     *
+     * Requires login
+     */
     public static func newPost(
         title: String,
         content: String,
         images: [UIImage],
         progressHandler: @escaping (Double) -> ()
     ) -> Promise<String> {
+        
         var headers = self.buildHeaders()
         headers["Content-type"] = "multipart/form-data"
+        
         return Promise{ seal in
+            // Build the request using Multipart form data, and add
+            // the images in JPEG format to the form.
             Alamofire.upload(
                 multipartFormData: { (multipartFormData) in
                     for image in images {

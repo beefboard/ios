@@ -50,7 +50,7 @@ class ProfileController: UIViewController {
             message: "Are you sure you would like to logout",
             preferredStyle: .alert
         )
-        dialog.addAction(UIAlertAction(title: "Yes", style: .default, handler: { (action) in
+        dialog.addAction(UIAlertAction(title: "Yes", style: .destructive, handler: { (action) in
             self.authSource.logout()
         }))
         dialog.addAction(UIAlertAction(title: "Cancel", style: .default, handler: nil))

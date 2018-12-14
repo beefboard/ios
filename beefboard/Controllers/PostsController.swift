@@ -55,10 +55,17 @@ class PostsController: UITableViewController {
     
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
+        // When the posts screen is shown, retrieve our
+        // current auth info
         self.authSource.retrieveAuth()
     }
     
-    func presentView(of viewController: UIViewController) {
+    /**
+     * Handle presenting a view controller, but ensuring
+     * that the view controller inherits a navigation controller
+     * for navigation bar
+     */
+    private func presentView(of viewController: UIViewController) {
         let navController = UINavigationController(rootViewController: viewController)
         self.present(navController, animated: true, completion: nil)
     }
@@ -128,11 +135,12 @@ class PostsController: UITableViewController {
     // MARK: - Table view data source
 
     override func numberOfSections(in tableView: UITableView) -> Int {
-        // #warning Incomplete implementation, return the number of sections
+        // Pinned and posts sections
         return 2
     }
 
     override func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
+        // Create the pinned and posts sections
         switch(section) {
         case 0:
             return self.pinnedPosts.count
@@ -154,6 +162,7 @@ class PostsController: UITableViewController {
     }
     
     override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
+        // Fill in details for the cell
         let cell = tableView.dequeueReusableCell(withIdentifier: PostCell.identifier, for: indexPath) as! PostCell
         
         let post = self.getPost(at: indexPath)

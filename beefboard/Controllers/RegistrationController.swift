@@ -12,6 +12,7 @@ class RegistrationController: UIViewController {
     
     private var registrationModel = RegistrationModel()
     private var authModel = AuthModel()
+    private var profileModel = ProfilesModel()
 
     @IBAction func signupAction(_ sender: Any) {
         self.handleSignupClicked()
@@ -50,6 +51,7 @@ class RegistrationController: UIViewController {
         
         registrationModel.delegate = self
         authModel.delegate = self
+        profileModel.delegate = self
         
         updateForm()
         
@@ -97,7 +99,7 @@ class RegistrationController: UIViewController {
             DispatchQueue.main.asyncAfter(deadline: .now() + .milliseconds(100)) {
                 // Only run this check if the username has not changed
                 if self.usernameInput.text == checkUsername {
-                    self.registrationModel.checkUsername(username: checkUsername)
+                    self.profileModel.retrieveDetails(username: checkUsername)
                 }
             }
         }
@@ -180,10 +182,10 @@ class RegistrationController: UIViewController {
     func handleCancelClicked() {
         let dialog = UIAlertController(
             title: "Cancel",
-            message: "Are you sure you want to cance registration",
+            message: "Are you sure you want to cancel registration",
             preferredStyle: .alert
         )
-        dialog.addAction(UIAlertAction(title: "Yes", style: .default, handler: { (action) in
+        dialog.addAction(UIAlertAction(title: "Yes", style: .destructive, handler: { (action) in
             self.dismiss(animated: true, completion: nil)
         }))
         dialog.addAction(UIAlertAction(title: "No", style: .cancel, handler: nil))
@@ -193,11 +195,6 @@ class RegistrationController: UIViewController {
 }
 
 extension RegistrationController: RegistrationModelDelegate {
-    func didReceiveUsernameInfo(taken: Bool) {
-        self.usernameTaken = taken
-        self.updateForm()
-    }
-    
     func didReceiveEmailValid(valid: Bool) {
         self.emailValid = valid
         self.updateForm()
@@ -230,4 +227,13 @@ extension RegistrationController: AuthModelDelegate {
             completion: nil
         )
     }
+}
+
+extension RegistrationController: ProfilesModelDelegate {
+    func didReceiveProfileDetails(user: User?) {
+        self.usernameTaken = user != nil
+        self.updateForm()
+    }
+    
+    func didReceiveProfileDetailsError(error: ApiError) {}
 }
